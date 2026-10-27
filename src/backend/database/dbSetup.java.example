@@ -1,0 +1,12 @@
+package database;
+
+/*
+CSCE 331
+Database setup example
+Purpose: Keeping usernames and password private.
+*/
+public final class dbSetup  {
+    public static final String user = "<user_name>";
+    public static final String pswd = "<password>";
+    public static final String url = "<database_url>"
+}//end class
