@@ -17,3 +17,13 @@ Brandon
 ## Novel Feature
 
 A rewards system - Rewards points to costumers for items. The more they buy, the more points they get to later get discounts on items.
+
+## Our Techstack
+
+### Front-end
+UI Software: React + Typescript
+UI Design: Figma, Claude Design
+
+### Back-end
+Database: PostgreSQL
+Programming: Java + Javalin
