@@ -26,4 +26,16 @@ A rewards system - Rewards points to costumers for items. The more they buy, the
 
 #### Back-end
 - Database: PostgreSQL
-- Programming: Java + Javalin
+- Programming: Java + Javalin(HTTP)
+
+#### Back End Structure:
+    - Top level: App
+        - Registers routes, connects database, and starts server
+    - Controllers
+        - Handles HTTP logic and unpacks request payload for use in services and returns status codes
+    - Services
+        - Main business logic that deals only with java and our own custom types and calls repository functions
+    - Repository
+        - Direct database interaction that handles SQL queries
+    - Models
+        - Our custom data types that structure what data is collected for use in the database or for any other logic
