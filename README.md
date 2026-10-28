@@ -5,7 +5,7 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 ## Live Links
 - **Deployed app:** TBD
 - **Documentation:** TBD
-- **Project board (backlog + burn-up):** <GitHub Projects URL>
+- **Project board (backlog + burn-up):** [GitHub Projects URL](https://github.com/orgs/CSCE331-Fall2026/projects/14)
 
 ## Roles
 | Name | Role |
