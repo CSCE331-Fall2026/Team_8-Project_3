@@ -18,6 +18,7 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 
 ## Novel Feature
 **What it is:** Our novel feature will be a rewards system for the user that allows them to get rewards based on their purchases. It will be somewhere along the lines of every $10 spent, the system will give them $1 back.
+
 **Motivation:** It serves both the user and the manager because it allows users who buy from our store more often to get what they need
 
 ## Tech Stack
