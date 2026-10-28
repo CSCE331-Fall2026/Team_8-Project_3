@@ -27,8 +27,9 @@ A rewards system - Rewards points to costumers for items. The more they buy, the
 #### Back-end
 - Database: PostgreSQL
 - Programming: Java + Javalin(HTTP)
+- Authentication: Firebase
 
-#### Back End Structure:
+### Back End Structure:
     - Top level: App
         - Registers routes, connects database, and starts server
     - Controllers
