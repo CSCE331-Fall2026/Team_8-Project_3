@@ -1,13 +1,13 @@
 import io.javalin.Javalin;
 
-import controllers.CashierController;
-import services.CashierService;
+import controllers.OrderController;
+import services.OrderService;
 import database.Database;
 
 public class App {
     public static void main(String[] args) {
         Javalin app = Javalin.create(config -> {
-            cashierController.registerRoutes(config);
+            OrderController.registerRoutes(config);
         }).start(8080);
     }
 }

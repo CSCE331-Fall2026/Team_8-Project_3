@@ -1,6 +1,6 @@
 package repository;
 
-public class CashierRepository {
+public class OrderRepository {
 
 }
 

@@ -2,19 +2,19 @@ package controllers;
 
 import io.javalin.http.Context;
 
-import services.CashierService;
+import services.OrderService;
 
-public class CashierController {
-    private final CashierService cashierService;
+public class OrderController {
+    private final OrderService OrderService;
 
-    public CashierController(CashierService cashierService, CashierService cashierService1) {
-        this.cashierService = cashierService;
+    public OrderController(OrderService OrderService, OrderService OrderService1) {
+        this.OrderService = OrderService;
     }
 
     public void placeOrder(Context ctx) {
         double amount = Double.parseDouble(ctx.pathParam("amount"));
 
-        cashierService.placeOrder(amount);
+        OrderService.placeOrder(amount);
         ctx.status(201).result("Order placed");
     }
 }

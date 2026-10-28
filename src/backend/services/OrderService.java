@@ -1,12 +1,12 @@
 package services;
 
-import repository.CashierRepository;
+import repository.OrderRepository;
 
-public class CashierService {
-    private final CashierRepository cashierRepository;
+public class OrderService {
+    private final OrderRepository OrderRepository;
 
-    public CashierService(CashierRepository cashierRepository) {
-        this.cashierRepository = cashierRepository;
+    public OrderService(OrderRepository OrderRepository) {
+        this.OrderRepository = OrderRepository;
     }
 
     public void placeOrder(double amount) {
@@ -14,7 +14,7 @@ public class CashierService {
     }
 
     public models.ComboType getOrder(int id) {
-        return cashierRepository.getOrderById(id);
+        return OrderRepository.getOrderById(id);
     }
 }
 
