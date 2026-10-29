@@ -5,15 +5,14 @@
 ## Sprint 1
 **Goal:** Orders implemented on Manager, Costumer, and Cashier end with full database and CRUD connection. A simple UI will be made to test this.
 
-**Outcome:** A single user journey of orders, which will allow the user to do their respective task. For the manager, this will be checking orders, for customer adding orders, etc.
+**Outcome:** The user journeys based on orders for each user, which will allow the user to do their respective task. For the manager, this will be checking orders, for customer adding orders, and for the cashier it will also be adding orders.
 
 ## Sprint 2
-**Goal:** Fixing issues based on feedback, then implementing reports and such for the manager view. This will also be where we start to work on UI elements for each view. We will also implement the rewards system in this phase.
+**Goal:** Implementing reports and price changes for the manager view. Proper UI elements for each view will be implemented. Reward System for the costumer view will be implemented.
 
-**Outcome:** The same user journey as before, but ensuring previously seen issues get fixed. We will also show the manager journey of looking at reports and changing menu items and such. Finally, the journey of the costumer operating the rewards system.
+**Outcome:** The manager user journey of viewing the reports, ensuring changes can be viewed from costumer and cashier views. The costumer user journey of operating the rewards system, including receiving and purchasing using reward points.
 
 ## Sprint 3
-**Goal:** A focus will be given to the UI elements, we will fix any bugs that may have been encountered during testing. Polish all the elements to completion. This will generally be a sprint to finish off the project.
+**Goal:** Completion of UI elements. Polishing of back-end elements, fixing all bugs. This sprint will be used to ensure the project is finished, completing all outstanding tasks from previous sprints and fixing bugs that may have arose.
 
-**Outcome:** The completed product. Ordering from all three user types, rewards from the customer point of view, reports from the manager point of view.
-
+**Outcome:** The completed product and user journeys. For the manager, this will be viewing orders, reports, and changing prices. For the costumer, this will be ordering and using the rewards system. For the cashier, this will be ordering. An emphasis will be put on the UI.
