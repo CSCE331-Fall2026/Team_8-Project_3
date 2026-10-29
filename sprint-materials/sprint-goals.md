@@ -13,6 +13,6 @@
 **Outcome:** The manager user journey of viewing the reports, ensuring changes can be viewed from costumer and cashier views. The costumer user journey of operating the rewards system, including receiving and purchasing using reward points.
 
 ## Sprint 3
-**Goal:** Completion of UI elements. Polishing of back-end elements, fixing all bugs. This sprint will be used to ensure the project is finished, completing all outstanding tasks from previous sprints and fixing bugs that may have arose.
+**Goal:** Completion of UI elements. Addition of translation feature. Polishing of back-end elements, fixing all bugs. This sprint will be used to ensure the project is finished, completing all outstanding tasks from previous sprints and fixing bugs that may have arose.
 
-**Outcome:** The completed product and user journeys. For the manager, this will be viewing orders, reports, and changing prices. For the costumer, this will be ordering and using the rewards system. For the cashier, this will be ordering. An emphasis will be put on the UI.
+**Outcome:** The completed product and user journeys. For the manager, this will be viewing orders, reports, and changing prices. For the costumer, this will be ordering and using the rewards system. For the cashier, this will be ordering. An emphasis will be put on the UI. Each view will also demo translation by switching to a different language in every step.
