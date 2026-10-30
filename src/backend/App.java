@@ -25,6 +25,11 @@ public class App {
             orderController.registerRoutes(config);
         });
 
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            app.stop();
+            Database.close();
+        }));
+
         app.start(8080);
     }
 }
