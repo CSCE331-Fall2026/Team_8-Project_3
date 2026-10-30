@@ -34,7 +34,9 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 ## Frontend: Compile and run
 
 ``cd src/frontend``
+
 ``npm install``
+
 ``npm run dev``
 
 
