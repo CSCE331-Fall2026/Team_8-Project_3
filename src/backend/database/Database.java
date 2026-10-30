@@ -2,7 +2,7 @@ package database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import javax.sql.Database;
+import javax.sql.DataSource;
 
 // Our old database function call
 // Call in App at beginning to establish connection
@@ -15,7 +15,7 @@ public final class Database {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(dbSetup.url);
         config.setUsername(dbSetup.user);
-        config.setPassword(dbsetup.pswd);
+        config.setPassword(dbSetup.pswd);
 
         return new HikariDataSource(config);
     }
