@@ -1,5 +1,6 @@
 package controllers;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import io.javalin.http.Context;
@@ -15,7 +16,7 @@ public class OrderController {
     }
 
     // POST /orders
-    public void placeOrder(Context ctx) {
+    public void placeOrder(Context ctx) throws SQLException {
         Order order = ctx.bodyAsClass(Order.class);
 
         Order created = orderService.placeOrder(order);
@@ -23,7 +24,7 @@ public class OrderController {
     }
 
     // GET /orders/{orderID}
-    public void getOrder(Context ctx) {
+    public void getOrder(Context ctx) throws SQLException {
         int orderID = ctx.pathParamAsClass("orderID", Integer.class).get();
 
         Order order = orderService.getOrder(orderID);
@@ -35,7 +36,7 @@ public class OrderController {
     }
 
     // GET /orders?n=10
-    public void getOrders(Context ctx) {
+    public void getOrders(Context ctx) throws SQLException {
         int n = ctx.queryParamAsClass("n", Integer.class)
                 .check(value -> value > 0, "n must be a positive number")
                 .get();
@@ -45,7 +46,7 @@ public class OrderController {
     }
 
     // PUT /orders/{orderID}
-    public void updateOrder(Context ctx) {
+    public void updateOrder(Context ctx) throws SQLException {
         int orderID = ctx.pathParamAsClass("orderID", Integer.class).get();
         Order order = ctx.bodyAsClass(Order.class);
 
@@ -58,16 +59,16 @@ public class OrderController {
     }
 
     // DELETE /orders/{orderID}
-    // public void deleteOrder(Context ctx) {
-    //     int orderID = ctx.pathParamAsClass("orderID", Integer.class).get();
+    public void deleteOrder(Context ctx) throws SQLException {
+        int orderID = ctx.pathParamAsClass("orderID", Integer.class).get();
 
-    //     boolean deleted = orderService.deleteOrder(orderID);
-    //     if (!deleted) {
-    //         ctx.status(404).result("Order not found");
-    //         return;
-    //     }
-    //     ctx.status(204);
-    // }
+        boolean deleted = orderService.deleteOrder(orderID);
+        if (!deleted) {
+            ctx.status(404).result("Order not found");
+            return;
+        }
+        ctx.status(204);
+    }
 }
 
 // TODO: Implement cashier functionality
