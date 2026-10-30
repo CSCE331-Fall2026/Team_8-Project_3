@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import io.javalin.http.Context;
+import io.javalin.config.JavalinConfig;
 
 import models.Order;
 import services.OrderService;
@@ -15,6 +16,14 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    public void registerRoutes(JavalinConfig config) {
+        config.routes.post("/orders", this::placeOrder);
+        config.routes.get("/orders/{orderID}", this::getOrderByID);
+        config.routes.get("/orders", this::getOrders);
+        config.routes.put("/orders/{orderID}", this::updateOrder);
+        config.routes.delete("/orders/{orderID}", this::deleteOrder);
+    }
+
     // POST /orders
     public void placeOrder(Context ctx) throws SQLException {
         Order order = ctx.bodyAsClass(Order.class);
@@ -24,7 +33,7 @@ public class OrderController {
     }
 
     // GET /orders/{orderID}
-    public void getOrder(Context ctx) throws SQLException {
+    public void getOrderByID(Context ctx) throws SQLException {
         int orderID = ctx.pathParamAsClass("orderID", Integer.class).get();
 
         Order order = orderService.getOrder(orderID);
