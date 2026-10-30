@@ -29,6 +29,8 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 - **Authentication:** Firebase
 
 
+# User Guide
+
 ## Back-End: Compile and Run
 The back end lives in `src/backend` (Java 25, Maven, Javalin on port 8080).
 
