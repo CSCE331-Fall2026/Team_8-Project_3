@@ -1,27 +1,30 @@
 package database;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.Database;
 
 // Our old database function call
 // Call in App at beginning to establish connection
-public class Database {
-    private static final Logger logger = LoggerFactory.getLogger(Database.class);
+public final class Database {
+    private static final HikariDataSource pool = create();
 
-    public Connection connectDb() {
-        try {
-            dbSetup my = new dbSetup();
+    private Database() {}
 
-            Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(my.url, my.user, my.pswd);
-            logger.info("Successfully connected to database...");
-            return conn;
+    private static HikariDataSource create() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(dbSetup.url);
+        config.setUsername(dbSetup.user);
+        config.setPassword(dbsetup.pswd);
 
-        } catch (Exception e) {
-            logger.error("Error connecting to database: {}", e.getMessage(), e);
-            return null;
-        }
+        return new HikariDataSource(config);
+    }
+
+    public static DataSource dataSource() {
+        return pool;
+    }
+
+    public static void close() {
+        pool.close();
     }
 }
