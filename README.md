@@ -1,41 +1,30 @@
-# Team_8-Project_3
+# Team 8 — Panda Express POS Web App
+
 Team 8's website project for Panda Express targeted towards the public. Using our previous service, we will be making a website for costumers to purchase items on their own.
 
-### Roles
+## Live Links
+- **Deployed app:** TBD
+- **Documentation:** TBD
+- **Project board (backlog + burn-up):** [GitHub Projects URL](https://github.com/orgs/CSCE331-Fall2026/projects/14)
 
-#### Project Manager
-- Vish
+## Roles
+| Name | Role |
+|------|------|
+| Vish | Project Manager & Full-stack |
+| Brandon | Front-end Lead |
+| Will | Front-end Lead |
+| Tyler | Back-end Lead |
+| Arnav | Back-end Lead |
 
-#### Back-end
-- Tyler
-- Arnav
+## Novel Feature
+**What it is:** Our novel feature will be a rewards system for the user that allows them to get rewards based on their purchases. It will be somewhere along the lines of every $10 spent, the system will give them $1 back.
 
-#### Front-end
-- Will
-- Brandon
+**Motivation:** It serves both the user and the manager because it allows users who buy from our store more often to get what they need
 
-### Novel Feature
+## Tech Stack
+- **Front-end:** Software used for implementation:  React + Typescript, software used for design: Figma, Claude Design
+- **Back-end:** Java/JDBC, Javalin
+- **Database:** PostgreSQL on AWS
+- **Hosting service:** people.tamu.edu
+- **Authentication:** Firebase
 
-A rewards system - Rewards points to costumers for items. The more they buy, the more points they get to later get discounts on items.
-
-### Our Techstack
-
-#### Front-end
-- UI Software: React + Typescript
-- UI Design: Figma, Claude Design
-
-#### Back-end
-- Database: PostgreSQL
-- Programming: Java + Javalin(HTTP)
-
-#### Back End Structure:
-    - Top level: App
-        - Registers routes, connects database, and starts server
-    - Controllers
-        - Handles HTTP logic and unpacks request payload for use in services and returns status codes
-    - Services
-        - Main business logic that deals only with java and our own custom types and calls repository functions
-    - Repository
-        - Direct database interaction that handles SQL queries
-    - Models
-        - Our custom data types that structure what data is collected for use in the database or for any other logic
