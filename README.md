@@ -31,6 +31,13 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 
 # User Guide
 
+## Frontend: Compile and run
+
+``cd src/frontend``
+``npm install``
+``npm run dev``
+
+
 ## Back-End: Compile and Run
 The back end lives in `src/backend` (Java 25, Maven, Javalin on port 8080).
 
