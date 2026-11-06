@@ -23,6 +23,9 @@ public class App {
 
         Javalin app = Javalin.create(config -> {
             orderController.registerRoutes(config);
+            config.bundledPlugins.enableCors(cors -> {
+                cors.addRule(rule -> rule.allowHost("http://localhost:5173"));
+            });
         });
 
         app.start(8080);
