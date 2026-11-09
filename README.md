@@ -66,6 +66,9 @@ On Windows, check your setup with `java -version` and `mvn -version`. If `mvn` i
 
 A successful start prints Javalin's startup output. If the database connection fails, the app prints `Error connecting to database: ...` and exits.
 
+### Running without a database
+If no database is configured (no `db.properties` and no `DB_*` environment variables), or `IN_MEMORY_DB=true` is set, the backend starts with built-in sample orders, menu items and ingredients held in memory. All endpoints work the same, but changes are lost when the server restarts.
+
 ## Deploying to Render
 **Backend:** New > Web Service, Language **Docker**, Root Directory `src/backend` (it contains the `Dockerfile`). In Environment, set `DB_URL` (add `?sslmode=require` if the database requires SSL), `DB_USER`, `DB_PASSWORD`, and `CORS_ORIGINS` set to the frontend's `https://….onrender.com` URL. Render supplies `PORT`.
 

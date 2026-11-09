@@ -6,6 +6,9 @@ import controllers.IngredientsController;
 import controllers.OrderController;
 import controllers.MenuController;
 import database.Database;
+import repository.InMemoryIngredientRepository;
+import repository.InMemoryMenuRepository;
+import repository.InMemoryOrderRepository;
 import repository.IngredientRepository;
 import repository.MenuRepository;
 import repository.OrderRepository;
@@ -15,24 +18,34 @@ import services.OrderService;
 
 public class App {
     public static void main(String[] args) {
-        DataSource pool = null;
+        OrderRepository orderRepository;
+        MenuRepository menuRepository;
+        IngredientRepository ingredientRepository;
 
-        try {
-            pool = Database.dataSource();
-        } catch (ExceptionInInitializerError e) {
-            System.err.println("Error connecting to database: " + e.getCause().getMessage());
-            System.exit(1);
+        if ("true".equalsIgnoreCase(System.getenv("IN_MEMORY_DB")) || !Database.isConfigured()) {
+            System.out.println("No database configured: using in-memory sample data. Changes are lost on restart.");
+            orderRepository = new InMemoryOrderRepository();
+            menuRepository = new InMemoryMenuRepository();
+            ingredientRepository = new InMemoryIngredientRepository();
+        } else {
+            DataSource pool = null;
+            try {
+                pool = Database.dataSource();
+            } catch (RuntimeException e) {
+                System.err.println("Error connecting to database: " + e.getMessage());
+                System.exit(1);
+            }
+            orderRepository = new OrderRepository(pool);
+            menuRepository = new MenuRepository(pool);
+            ingredientRepository = new IngredientRepository(pool);
         }
 
-        OrderRepository orderRepository = new OrderRepository(pool);
         OrderService orderService = new OrderService(orderRepository);
         OrderController orderController = new OrderController(orderService);
 
-        MenuRepository menuRepository = new MenuRepository(pool);
         MenuService menuService = new MenuService(menuRepository);
         MenuController menuController = new MenuController(menuService);
 
-        IngredientRepository ingredientRepository = new IngredientRepository(pool);
         IngredientService ingredientService = new IngredientService(ingredientRepository);
         IngredientsController ingredientsController = new IngredientsController(ingredientService);
 

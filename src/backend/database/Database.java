@@ -16,9 +16,15 @@ public final class Database {
     // Environment variables take priority; db.properties (gitignored) is the local fallback
     private static final Path LOCAL_CONFIG = Path.of("db.properties");
     private static final Properties local = loadLocalConfig();
-    private static final HikariDataSource pool = create();
+    private static HikariDataSource pool;
 
     private Database() {}
+
+    public static boolean isConfigured() {
+        return lookup("DB_URL", "url") != null
+                && lookup("DB_USER", "user") != null
+                && lookup("DB_PASSWORD", "password") != null;
+    }
 
     private static HikariDataSource create() {
         HikariConfig config = new HikariConfig();
@@ -29,12 +35,17 @@ public final class Database {
         return new HikariDataSource(config);
     }
 
-    private static String setting(String envName, String propertyName) {
+    private static String lookup(String envName, String propertyName) {
         String value = System.getenv(envName);
         if (value == null || value.isBlank()) {
             value = local.getProperty(propertyName);
         }
-        if (value == null || value.isBlank()) {
+        return value == null || value.isBlank() ? null : value;
+    }
+
+    private static String setting(String envName, String propertyName) {
+        String value = lookup(envName, propertyName);
+        if (value == null) {
             throw new IllegalStateException("Missing " + envName + " environment variable or '"
                     + propertyName + "' in " + LOCAL_CONFIG.toAbsolutePath());
         }
@@ -53,11 +64,16 @@ public final class Database {
         return props;
     }
 
-    public static DataSource dataSource() {
+    public static synchronized DataSource dataSource() {
+        if (pool == null) {
+            pool = create();
+        }
         return pool;
     }
 
-    public static void close() {
-        pool.close();
+    public static synchronized void close() {
+        if (pool != null) {
+            pool.close();
+        }
     }
 }
