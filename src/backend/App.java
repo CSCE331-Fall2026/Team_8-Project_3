@@ -1,11 +1,14 @@
 import io.javalin.Javalin;
 import javax.sql.DataSource;
 
+import controllers.IngredientsController;
 import controllers.OrderController;
 import controllers.MenuController;
 import database.Database;
+import repository.IngredientRepository;
 import repository.MenuRepository;
 import repository.OrderRepository;
+import services.IngredientService;
 import services.MenuService;
 import services.OrderService;
 
@@ -28,9 +31,14 @@ public class App {
         MenuService menuService = new MenuService(menuRepository);
         MenuController menuController = new MenuController(menuService);
 
+        IngredientRepository ingredientRepository = new IngredientRepository(pool);
+        IngredientService ingredientService = new IngredientService(ingredientRepository);
+        IngredientsController ingredientsController = new IngredientsController(ingredientService);
+
         Javalin app = Javalin.create(config -> {
             orderController.registerRoutes(config);
             menuController.registerRoutes(config);
+            ingredientsController.registerRoutes(config);
             config.bundledPlugins.enableCors(cors -> {
                 cors.addRule(rule -> rule.allowHost("http://localhost:5173"));
             });

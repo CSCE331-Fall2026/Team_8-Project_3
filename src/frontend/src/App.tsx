@@ -1,37 +1,15 @@
-import './App.css'
-import { Button } from "./components/ui/button";
+import { Routes, Route, Link } from "react-router-dom";
+import Cashier from "./pages/Cashier";
+import Customer from "./pages/Customer";
 
-function App() {
-  const testOrder = {
-    orderStatus: "paid",
-    paymentMethod: "credit_card",
-    orderTotal: 12.5,
-  };
-
-  const handleClick = async () => {
-    try {
-      const res = await fetch("http://localhost:8080/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(testOrder),
-      });
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const text = await res.text();
-      console.log("Response:", text);
-    } catch (e) {
-      console.error("Request failed:", e);
-    }
-  };
-
+export default function App() {
   return (
     <>
-      <section id="center">
-        <div className="flex items-center p-4">
-          <Button onClick={handleClick}>Click this button to create a test order</Button>
-        </div>
-      </section>
+      <Routes>
+        <Route path="/cashier" element={<Cashier />} />
+        <Route path="/customer" element={<Customer />} />
+        <Route path="*" element={<p className="p-4">Page not found</p>} />
+      </Routes>
     </>
   );
 }
-
-export default App;
