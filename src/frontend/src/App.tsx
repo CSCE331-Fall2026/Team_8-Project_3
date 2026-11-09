@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Cashier from "./pages/Cashier";
 import Customer from "./pages/Customer";
 
@@ -6,6 +6,7 @@ export default function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<Navigate to="/cashier" replace />} />
         <Route path="/cashier" element={<Cashier />} />
         <Route path="/customer" element={<Customer />} />
         <Route path="*" element={<p className="p-4">Page not found</p>} />
