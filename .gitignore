@@ -41,6 +41,9 @@ replay_pid*
 dbSetup.java
 db.properties
 
+# Lab slides
+docs/*.pptx
+
 javafx-sdk-25/
 javafx-sdk-27/
 
