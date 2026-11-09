@@ -104,11 +104,11 @@ public class IngredientRepository {
             ingredients.add(new Ingredient(
                     rs.getInt("ingredient_id"),
                     rs.getString("ingredient_name"),
-                    rs.getObject("quantity_in_stock", Float.class),
+                    rs.getObject("quantity_in_stock", Double.class),
                     storageType == null ? null : Ingredient.StorageType.valueOf(storageType),
-                    rs.getObject("ingredient_cost", Float.class),
+                    rs.getObject("ingredient_cost", Double.class),
                     rs.getString("expiry_date"),
-                    rs.getObject("min_qty_on_hand", Float.class),
+                    rs.getObject("min_qty_on_hand", Double.class),
                     rs.getString("measurement_units"),
                     rs.getObject("shelf_life_days", Integer.class)));
         }

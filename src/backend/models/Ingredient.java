@@ -4,11 +4,11 @@ package models;
 public record Ingredient(
     Integer ingredientId,
     String ingredientName,
-    Float quantityInStock,
+    Double quantityInStock,
     StorageType storageType,
-    Float ingredientCost,
+    Double ingredientCost,
     String expiryDate,
-    Float minQtyOnHand,
+    Double minQtyOnHand,
     String measurementUnits,
     Integer shelfLifeDays
 ) {
