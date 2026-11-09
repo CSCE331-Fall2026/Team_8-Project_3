@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../lib/api";
 
 interface Ingredient {
   ingredientId: number;
@@ -30,7 +31,7 @@ function Manager() {
 
   const fetchIngredients = async () => {
     try {
-      const res = await fetch("http://localhost:8080/ingredients");
+      const res = await fetch(`${API_URL}/ingredients`);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const data: Ingredient[] = await res.json();
       setIngredients(data);
@@ -47,7 +48,7 @@ function Manager() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/orders?n=${orderCount}`);
+      const res = await fetch(`${API_URL}/orders?n=${orderCount}`);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const data = await res.json();
       setOrders(data);
@@ -66,7 +67,7 @@ function Manager() {
     setPrices((prev) => ({ ...prev, [ingredientId]: value }));
   };
 
-  const handleSavePrice = (ingredient: Ingredient) => {
+  const handleSavePrice = (_ingredient: Ingredient) => {
   };
 
   return (

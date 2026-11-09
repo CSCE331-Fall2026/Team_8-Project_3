@@ -39,6 +39,7 @@ replay_pid*
 *.iml
 
 dbSetup.java
+db.properties
 
 javafx-sdk-25/
 javafx-sdk-27/

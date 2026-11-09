@@ -1,5 +1,6 @@
 import './Customer.css'
 import { Button } from "../components/ui/button";
+import { API_URL } from "../lib/api";
 
 function Customer() {
   const testOrder = {
@@ -10,7 +11,7 @@ function Customer() {
 
   const handleClick = async () => {
     try {
-      const res = await fetch("http://localhost:8080/orders", {
+      const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(testOrder),

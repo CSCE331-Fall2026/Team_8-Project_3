@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_URL } from "../lib/api";
 
 interface Ingredient {
   ingredientId: number;
@@ -18,7 +19,7 @@ function Kitchen() {
 
   const fetchIngredients = async () => {
     try {
-      const res = await fetch("http://localhost:8080/ingredients");
+      const res = await fetch(`${API_URL}/ingredients`);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const data = await res.json();
       setIngredients(data);

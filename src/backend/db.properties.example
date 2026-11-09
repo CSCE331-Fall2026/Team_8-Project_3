@@ -1,0 +1,4 @@
+# Copy to db.properties (gitignored) for local runs. On Render, set DB_URL, DB_USER and DB_PASSWORD instead.
+url=jdbc:postgresql://<host>:5432/<database>?sslmode=require
+user=<user_name>
+password=<password>

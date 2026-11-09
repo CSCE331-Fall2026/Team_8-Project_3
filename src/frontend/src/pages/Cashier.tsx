@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { API_URL } from "../lib/api";
 
 const ADD_BUTTONS = ["Bowl", "Plate", "Bigger Plate", "Single Item", "Drink/App"];
 const ENTREES = ["Chicken", "Fried Rice", "Orange Chicken"];
@@ -26,7 +27,7 @@ function Cashier() {
 
   const handleCheckout = async () => {
     try {
-      const res = await fetch("/api/orders", {
+      const res = await fetch(`${API_URL}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

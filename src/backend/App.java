@@ -1,4 +1,5 @@
 import io.javalin.Javalin;
+import java.util.Arrays;
 import javax.sql.DataSource;
 
 import controllers.IngredientsController;
@@ -40,7 +41,7 @@ public class App {
             menuController.registerRoutes(config);
             ingredientsController.registerRoutes(config);
             config.bundledPlugins.enableCors(cors -> {
-                cors.addRule(rule -> rule.allowHost("http://localhost:5173"));
+                cors.addRule(rule -> rule.allowHost("http://localhost:5173", allowedOrigins()));
             });
         });
 
@@ -49,6 +50,20 @@ public class App {
             Database.close();
         }));
 
-        app.start(8080);
+        // Render supplies PORT and requires binding to 0.0.0.0
+        String port = System.getenv("PORT");
+        app.start("0.0.0.0", port == null || port.isBlank() ? 8080 : Integer.parseInt(port));
+    }
+
+    // Comma-separated deployed frontend origins, e.g. https://team8.onrender.com
+    private static String[] allowedOrigins() {
+        String origins = System.getenv("CORS_ORIGINS");
+        if (origins == null || origins.isBlank()) {
+            return new String[0];
+        }
+        return Arrays.stream(origins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isEmpty())
+                .toArray(String[]::new);
     }
 }

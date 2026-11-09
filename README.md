@@ -25,7 +25,7 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 - **Front-end:** Software used for implementation:  React + Typescript, software used for design: Figma, Claude Design
 - **Back-end:** Java/JDBC, Javalin
 - **Database:** PostgreSQL on AWS
-- **Hosting service:** people.tamu.edu
+- **Hosting service:** Render (backend Web Service + frontend Static Site)
 - **Authentication:** Firebase
 
 
@@ -39,13 +39,17 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 
 ``npm run dev``
 
+The frontend calls the backend at `http://localhost:8080` unless `VITE_API_URL` is set when building.
+
 
 ## Back-End: Compile and Run
 The back end lives in `src/backend` (Java 25, Maven, Javalin on port 8080).
 
 ### Setup
 1. Install JDK 25.
-2. Copy `src/backend/database/dbSetup.java.example` to `src/backend/database/dbSetup.java` and fill in the credentials. The URL must be a JDBC URL (`jdbc:postgresql://<host>:5432/<db>`), and each line must end with a semicolon. `dbSetup.java` is gitignored, so do not commit it.
+2. Copy `src/backend/db.properties.example` to `src/backend/db.properties` and fill in the credentials. The URL must be a JDBC URL (`jdbc:postgresql://<host>:5432/<db>`). `db.properties` is gitignored, so do not commit it. The old `dbSetup.java` file is no longer used.
+
+Instead of `db.properties`, you can set the `DB_URL`, `DB_USER` and `DB_PASSWORD` environment variables, which take priority. The backend also reads `PORT` (default `8080`) and `CORS_ORIGINS`, a comma-separated list of frontend origins allowed in addition to `http://localhost:5173`.
 
 ### Run from the terminal
 Requires JDK 25 and Maven. From `src/backend`:
@@ -61,6 +65,11 @@ Install Maven with:
 On Windows, check your setup with `java -version` and `mvn -version`. If `mvn` is not recognized, `JAVA_HOME` must point to the JDK 25 folder and Maven's `bin` folder must be on `PATH`.
 
 A successful start prints Javalin's startup output. If the database connection fails, the app prints `Error connecting to database: ...` and exits.
+
+## Deploying to Render
+**Backend:** New > Web Service, Language **Docker**, Root Directory `src/backend` (it contains the `Dockerfile`). In Environment, set `DB_URL` (add `?sslmode=require` if the database requires SSL), `DB_USER`, `DB_PASSWORD`, and `CORS_ORIGINS` set to the frontend's `https://….onrender.com` URL. Render supplies `PORT`.
+
+**Frontend:** New > Static Site, Root Directory `src/frontend`, Build Command `npm install && npm run build`, Publish Directory `dist`. Set the environment variable `VITE_API_URL` to the backend's `https://….onrender.com` URL. Under Redirects/Rewrites, add a rewrite from `/*` to `/index.html` so routes like `/cashier` work on refresh.
 
 ## Example Postman Requests
 Base URL: `http://localhost:8080`. For requests with a body, choose **Body > raw > JSON**.
