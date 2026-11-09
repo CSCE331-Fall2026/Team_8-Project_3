@@ -2,8 +2,11 @@ import io.javalin.Javalin;
 import javax.sql.DataSource;
 
 import controllers.OrderController;
+import controllers.MenuController;
 import database.Database;
+import repository.MenuRepository;
 import repository.OrderRepository;
+import services.MenuService;
 import services.OrderService;
 
 public class App {
@@ -21,8 +24,13 @@ public class App {
         OrderService orderService = new OrderService(orderRepository);
         OrderController orderController = new OrderController(orderService);
 
+        MenuRepository menuRepository = new MenuRepository(pool);
+        MenuService menuService = new MenuService(menuRepository);
+        MenuController menuController = new MenuController(menuService);
+
         Javalin app = Javalin.create(config -> {
             orderController.registerRoutes(config);
+            menuController.registerRoutes(config);
             config.bundledPlugins.enableCors(cors -> {
                 cors.addRule(rule -> rule.allowHost("http://localhost:5173"));
             });
