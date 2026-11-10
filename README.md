@@ -24,7 +24,7 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 ## Tech Stack
 - **Front-end:** Software used for implementation:  React + Typescript, software used for design: Figma, Claude Design
 - **Back-end:** Java/JDBC, Javalin
-- **Database:** PostgreSQL on AWS
+- **Database:** PostgreSQL on GCP CloudSQL
 - **Hosting service:** Render (backend Web Service + frontend Static Site)
 - **Authentication:** Firebase
 
