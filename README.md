@@ -3,7 +3,7 @@
 Team 8's website project for Panda Express targeted towards the public. Using our previous service, we will be making a website for costumers to purchase items on their own.
 
 ## Live Links
-- **Deployed app:** TBD
+- **Deployed app:** https://team-8-project-3-1.onrender.com/customer
 - **Documentation:** TBD
 - **Project board (backlog + burn-up):** [GitHub Projects URL](https://github.com/orgs/CSCE331-Fall2026/projects/14)
 
