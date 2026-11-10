@@ -3,9 +3,9 @@
 *Instructions: For each sprint, write a one or two sentence goal plus the single demoable outcome that proves the sprint succeeded. Keep in mind that you will conduct user studies after sprints 1 and 2 to get feedback to inform future development, so define MVP goals to be most helpful for that. The sprint 3 MVP should be your final product.*
 
 ## Sprint 1
-**Goal:** Orders implemented on Manager, Costumer, and Cashier end with full database and CRUD connection. A simple UI will be made to test this.
+**Goal:** Orders implemented on Manager, Costumer, and Cashier end with full database and CRUD connection. A simple, one button UI will be made to test this.
 
-**Outcome:** The user journeys based on orders for each user, which will allow the user to do their respective task. For the manager, this will be checking orders, for customer adding orders, and for the cashier it will also be adding orders.
+**Outcome:** The user journeys based on orders for each user, which will allow the user to do their respective task. For the manager, this will be checking orders, for customer adding orders, and for the cashier it will also be adding orders. This won't be much more than pressing a single button to make an order. We will also have mock front-ends.
 
 ## Sprint 2
 **Goal:** Implementing reports and price changes for the manager view. Proper UI elements for each view will be implemented. Reward System for the costumer view will be implemented.
