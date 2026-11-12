@@ -1,1 +1,2 @@
-# Sprint 2 Meetings
+# Sprint Meeting Minutes
+A description of what happened in each sprint meeting
