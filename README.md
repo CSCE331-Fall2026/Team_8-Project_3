@@ -87,14 +87,31 @@ Valid enum values:
 | Delete an order | DELETE | `/orders/1` | none |
 
 **Create an order** (`POST /orders`):
+Orders Plate Combo (Chow Mein, Orange Chicken, Honey Walnut Shrimp, and a Drink)
+and a Chicken Egg Roll A La Carte
 ```json
 {
-  "orderStatus": "paid",
   "paymentMethod": "credit_card",
-  "orderTotal": 12.5
+  "lines": [
+    { "comboId": 7, "quantity": 1, "menuItemIds": [13, 1, 2, 23] },
+    { "comboId": 4, "quantity": 1, "menuItemIds": [18] }
+  ]
 }
 ```
-Expected response: `201 Created` with the new order, including the database-generated `orderId` and `createdAt`. If `orderStatus` is omitted it defaults to `paid`, and if `orderTotal` is omitted it defaults to `0`.
+Expected response: `201 Created`
+
+**Send a Bad Order Request** (`POST /orders`):
+Orders a plate with only 1 entree
+```json
+{
+  "paymentMethod": "cash",
+  "lines": [
+    { "comboId": 2, "menuItemIds": [13,1] }
+  ]
+}
+```
+
+Expected response: `400 Bad Request`
 
 **Update an order** (`PUT /orders/1`):
 ```json
