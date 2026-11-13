@@ -1,22 +1,17 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 public enum ComboType {
-    BOWL(1, "Bowl", 1, 1, 0, 0, 0f),
-    PLATE(2, "Plate", 1, 2, 0, 0, 0f),
-    BIGGER_PLATE(3, "Bigger Plate", 1, 3, 0, 0, 0f),
-    A_LA_CARTE(4, "A La Carte", 0, 0, 0, 0, 0f),
-    DRINK(5, "Drink", 0, 0, 1, 0, 0f),
-    BOWL_COMBO(6, "Bowl Combo", 1, 1, 1, 0, 0f),
-    PLATE_COMBO(7, "Plate Combo", 1, 2, 1, 0, 0f),
-    BIGGER_PLATE_COMBO(8, "Bigger Plate Combo", 1, 3, 1, 0, 0f),
-    APPETIZER(9, "Appetizer", 0, 0, 0, 1, 0f);
+    BOWL(1, "Bowl", 1, 1, 0, 0),
+    PLATE(2, "Plate", 1, 2, 0, 0),
+    BIGGER_PLATE(3, "Bigger Plate", 1, 3, 0, 0),
+    A_LA_CARTE(4, "A La Carte", 0, 0, 0, 0),
+    DRINK(5, "Drink", 0, 0, 1, 0),
+    BOWL_COMBO(6, "Bowl Combo", 1, 1, 1, 0),
+    PLATE_COMBO(7, "Plate Combo", 1, 2, 1, 0),
+    BIGGER_PLATE_COMBO(8, "Bigger Plate Combo", 1, 3, 1, 0),
+    APPETIZER(9, "Appetizer", 0, 0, 0, 1);
 
     private final int comboId;
-    private float price;
     private final String displayName;
     private final int requiredSides;
     private final int requiredEntrees;
@@ -30,10 +25,9 @@ public enum ComboType {
             int requiredSides,
             int requiredEntrees,
             int requiredDrinks,
-            int requiredAppetizers,
-            float price) {
+            int requiredAppetizers
+        ) {
         this.comboId = comboId;
-        this.price = price;
         this.displayName = displayName;
         this.requiredSides = requiredSides;
         this.requiredEntrees = requiredEntrees;
@@ -44,31 +38,6 @@ public enum ComboType {
     /** Returns this combo's database identifier. */
     public int comboId() {
         return comboId;
-    }
-
-    /** Returns the cached combo price (seed/default until refreshed from the database). */
-    public float price() {
-        return price;
-    }
-
-    /** Queries the database for this combo's price and caches it on the enum constant. */
-    public float getPrice(Connection conn) {
-        if (conn == null) {
-            return price;
-        }
-        try {
-            Statement stmt = conn.createStatement();
-            String query = "SELECT combo_price FROM combos WHERE combo_id = " + comboId;
-            ResultSet result = stmt.executeQuery(query);
-            if (result.next()) {
-                price = result.getFloat("combo_price");
-            }
-            result.close();
-            stmt.close();
-        } catch (Exception e) {
-            System.out.println("Error fetching price for " + displayName + ":\n" + e.getMessage());
-        }
-        return price;
     }
 
     /** Returns the display name shown in the cashier interface. */
@@ -97,8 +66,8 @@ public enum ComboType {
     }
 
     /** Returns the selection limit for the specified menu category. */
-    public int limitFor(MenuCatalog.Category category) {
-        return switch (category) {
+    public int limitFor(MenuItemType type) {
+        return switch (type) {
             case SIDE -> requiredSides;
             case ENTREE -> requiredEntrees;
             case DRINK -> requiredDrinks;
@@ -111,22 +80,13 @@ public enum ComboType {
         return this == A_LA_CARTE;
     }
 
-    /** Returns the selection prompt for this combo type. */
-    public String progressText() {
-        if (this == DRINK) {
-            return "Pick 1 drink";
+    /** Returns the combo type with database id or null if none match */
+    public static ComboType fromId(int id) {
+        for (ComboType type : values()) {
+            if (type.comboId == id) {
+                return type;
+            }
         }
-        if (this == APPETIZER) {
-            return "Pick 1 appetizer";
-        }
-        if (isALaCarte()) {
-            return "Pick 1 side, entree, or appetizer";
-        }
-        String text = "Pick " + requiredSides + " side" + (requiredSides == 1 ? "" : "s")
-                + ", " + requiredEntrees + " entree" + (requiredEntrees == 1 ? "" : "s");
-        if (requiredDrinks > 0) {
-            text += ", then " + requiredDrinks + " drink";
-        }
-        return text;
+        return null;
     }
 }

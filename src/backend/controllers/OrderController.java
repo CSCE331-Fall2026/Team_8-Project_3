@@ -7,6 +7,7 @@ import io.javalin.http.Context;
 import io.javalin.config.JavalinConfig;
 
 import models.Order;
+import models.PlaceOrderRequest;
 import services.OrderService;
 
 public class OrderController {
@@ -26,10 +27,14 @@ public class OrderController {
 
     // POST /orders
     public void placeOrder(Context ctx) throws SQLException {
-        Order order = ctx.bodyAsClass(Order.class);
+        PlaceOrderRequest request = ctx.bodyAsClass(PlaceOrderRequest.class);
 
-        Order created = orderService.placeOrder(order);
-        ctx.status(201).json(created);
+        try {
+            Order createdOrder = orderService.placeOrder(request);
+            ctx.status(201).json(createdOrder);
+        } catch (IllegalArgumentException e) {
+            ctx.status(400).result(e.getMessage());
+        }
     }
 
     // GET /orders/{orderID}
