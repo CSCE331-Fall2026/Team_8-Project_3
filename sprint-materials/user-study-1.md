@@ -58,4 +58,5 @@ Try making an order consisting of 5 items.
 ## Proposed Design Moves (prioritized)
 | Priority | Proposed change | Evidence / justification | Sprint impact |
 |----------|-----------------|--------------------------|---------------|
-| 1 | Make the UI more grouped | Worries about easy of use  | |
+| 1 | Make the UI more grouped | Worries about easy of use | Will change the UI to fit these concerns |
+| 2 | Add more features | Users couldn't fully do what they were asked to | Will implement features in this sprint |
