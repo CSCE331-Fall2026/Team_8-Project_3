@@ -30,12 +30,32 @@ Try making an order consisting of 5 items.
 ## Participant Results & Observations
 <!-- one block per participant / team member -->
 
-### Participant A — [role] (session run by: [team member])
-- Likert ratings:
-- Notable quotes:
-- Observed behavior (hesitations, errors, friction):
+### Participant A — Costumer (session run by: Vish)
+- Likert ratings: Agree, Neutral, Strongly Agree
+- Notable quotes: Not much
+- Observed behavior (hesitations, errors, friction): No major issues
+
+### Participant B — Costumer (session run by: Brandon)
+- Likert ratings: Neutral, Disagree, Strongly Agree
+- Notable quotes: Everything was good, but maybe condensing some of the features would be good
+- Observed behavior (hesitations, errors, friction): No major issues
+
+### Participant C — Cashier (session run by: Tyler)
+- Likert ratings: Agree, Strongly Agree, Neutral
+- Notable quotes: Not able to do everything necessary
+- Observed behavior (hesitations, errors, friction): Wasn't able to access all features
+
+### Participant D — Costumer (session run by: Will)
+- Likert ratings: Neutral, Agree, Agree
+- Notable quotes: Not able to do everything necessary
+- Observed behavior (hesitations, errors, friction): Wasn't able to access all features
+
+### Participant E - Cashier (session run by: Arnav)
+- Likert ratings: Agree, Neutral, Agree
+- Notable quotes: Features should be grouped better
+- Observed behavior (hesitations, errors, friction): Slight confusion on what needs to be done
 
 ## Proposed Design Moves (prioritized)
 | Priority | Proposed change | Evidence / justification | Sprint impact |
 |----------|-----------------|--------------------------|---------------|
-| 1 | | | |
+| 1 | Make the UI more grouped | Worries about easy of use  | |
