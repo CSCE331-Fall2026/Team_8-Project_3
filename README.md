@@ -87,14 +87,17 @@ Valid enum values:
 | Delete an order | DELETE | `/orders/1` | none |
 
 **Create an order** (`POST /orders`):
-Orders Plate Combo (Chow Mein, Orange Chicken, Honey Walnut Shrimp, and a Drink)
-and a Chicken Egg Roll A La Carte
+Orders Bowl (Chow Mein, Orange Chicken) With Cashier w/ ID 2 and Customer w/ ID 3
+Note that in-store orders must have a cashier (customer optional) while online orders must have a customer and
+cannot have a cashier.
 ```json
 {
+  "customerId": 3,
+  "cashierId": 2,
+  "channel": "in_store",
   "paymentMethod": "credit_card",
-  "lines": [
-    { "comboId": 7, "quantity": 1, "menuItemIds": [13, 1, 2, 23] },
-    { "comboId": 4, "quantity": 1, "menuItemIds": [18] }
+  "lines": [ 
+    { "comboId": 1, "quantity": 1, "menuItemIds": [13, 1] } 
   ]
 }
 ```
@@ -113,7 +116,7 @@ Orders a plate with only 1 entree
 
 Expected response: `400 Bad Request`
 
-**Update an order** (`PUT /orders/1`):
+**Update an order** (`PUT /orders/{id}`):
 ```json
 {
   "orderStatus": "refunded"
