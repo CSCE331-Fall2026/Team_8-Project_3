@@ -51,6 +51,9 @@ The back end lives in `src/backend` (Java 25, Maven, Javalin on port 8080).
 
 Instead of `db.properties`, you can set the `DB_URL`, `DB_USER` and `DB_PASSWORD` environment variables, which take priority. The backend also reads `PORT` (default `8080`) and `CORS_ORIGINS`, a comma-separated list of frontend origins allowed in addition to `http://localhost:5173`.
 
+### Running the Firebase emulator
+firebase emulators:start --project team8project3-2f2ac
+
 ### Run from the terminal
 Requires JDK 25 and Maven. From `src/backend`:
 ```bash

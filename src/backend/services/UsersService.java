@@ -13,10 +13,19 @@ public class UsersService {
         this.usersRepository = usersRepository;
     }
 
-    public User createUser(CreateUserRequest request) throws SQLException {
+    public User createUser(CreateUserRequest request, String firebaseId, String email) throws SQLException {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Account has no email");
+        }
+        if (email.length() > 50) {
+            throw new IllegalArgumentException("Email must be 50 characters or less");
+        }
         UserRole userRole = validateUserRequest(request);
+        if (usersRepository.getUserByFirebaseId(firebaseId) != null) {
+            throw new IllegalStateException("Account already exists");
+        }
         try {
-            return usersRepository.createUser(userRole, request);
+            return usersRepository.createUser(userRole, request, firebaseId, email);
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
                 throw new IllegalArgumentException("Email is already in use");
@@ -29,16 +38,13 @@ public class UsersService {
         return usersRepository.getUserById(id);
     }
 
+    public User getUserByFirebaseId(String firebaseId) throws SQLException {
+        return usersRepository.getUserByFirebaseId(firebaseId);
+    }
+
     public User updateUser(int id, CreateUserRequest request) throws SQLException {
         UserRole userRole = validateUserRequest(request);
-        try {
-            return usersRepository.updateUser(id, userRole, request);
-        } catch (SQLException e) {
-            if ("23505".equals(e.getSQLState())) {
-                throw new IllegalArgumentException("Email is already in use");
-            }
-            throw e;
-        }
+        return usersRepository.updateUser(id, userRole, request);
     }
 
     public boolean deleteUser(int id) throws SQLException {
@@ -49,10 +55,6 @@ public class UsersService {
     private UserRole validateUserRequest(CreateUserRequest request) {
         requireText(request.firstName(), "First name", 50);
         requireText(request.lastName(), "Last name", 50);
-        requireText(request.email(), "Email", 50);
-        if (!request.email().contains("@")) {
-            throw new IllegalArgumentException("Email is not valid");
-        }
         if (request.phoneNumber() != null && request.phoneNumber().length() > 16) {
             throw new IllegalArgumentException("Phone number must be 16 characters or less");
         }

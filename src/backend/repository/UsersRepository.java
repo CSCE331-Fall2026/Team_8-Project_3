@@ -24,16 +24,18 @@ public class UsersRepository {
         this.pool = pool;
     }
 
-    public User createUser(UserRole userRole, CreateUserRequest request) throws SQLException {
+    public User createUser(UserRole userRole, CreateUserRequest request, String firebaseId, String email)
+            throws SQLException {
         try (Connection conn = pool.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO users (first_name, last_name, email, phone_number, user_role) "
-                            + "VALUES (?, ?, ?, ?, ?::user_role) RETURNING " + COLUMNS);
-            stmt.setString(1, request.firstName());
-            stmt.setString(2, request.lastName());
-            stmt.setString(3, request.email());
-            stmt.setString(4, request.phoneNumber());
-            stmt.setString(5, userRole.dbValue());
+                    "INSERT INTO users (firebase_id, first_name, last_name, email, phone_number, user_role) "
+                            + "VALUES (?, ?, ?, ?, ?, ?::user_role) RETURNING " + COLUMNS);
+            stmt.setString(1, firebaseId);
+            stmt.setString(2, request.firstName());
+            stmt.setString(3, request.lastName());
+            stmt.setString(4, email);
+            stmt.setString(5, request.phoneNumber());
+            stmt.setString(6, userRole.dbValue());
             return query(stmt).get(0);
         }
     }
@@ -48,18 +50,27 @@ public class UsersRepository {
         }
     }
 
+    public User getUserByFirebaseId(String firebaseId) throws SQLException {
+        try (Connection conn = pool.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT " + COLUMNS + " FROM users WHERE firebase_id = ? AND active = TRUE");
+            stmt.setString(1, firebaseId);
+            List<User> users = query(stmt);
+            return users.isEmpty() ? null : users.get(0);
+        }
+    }
+
     public User updateUser(int id, UserRole userRole, CreateUserRequest request) throws SQLException {
         try (Connection conn = pool.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
-                    "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ?, "
+                    "UPDATE users SET first_name = ?, last_name = ?, phone_number = ?, "
                             + "user_role = ?::user_role, updated_at = CURRENT_TIMESTAMP "
                             + "WHERE user_id = ? AND active = TRUE RETURNING " + COLUMNS);
             stmt.setString(1, request.firstName());
             stmt.setString(2, request.lastName());
-            stmt.setString(3, request.email());
-            stmt.setString(4, request.phoneNumber());
-            stmt.setString(5, userRole.dbValue());
-            stmt.setInt(6, id);
+            stmt.setString(3, request.phoneNumber());
+            stmt.setString(4, userRole.dbValue());
+            stmt.setInt(5, id);
             List<User> users = query(stmt);
             return users.isEmpty() ? null : users.get(0);
         }
