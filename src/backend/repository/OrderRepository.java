@@ -7,16 +7,13 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
 
-import models.MenuItemType;
-import models.Order;
-import models.OrderLine;
-import models.PaymentType;
+import models.*;
 
 import javax.sql.DataSource;
 
 public class OrderRepository {
-    private static final String COLUMNS = "order_id, order_status::text AS order_status, "
-            + "created_at::text AS created_at, updated_at::text AS updated_at, "
+    private static final String COLUMNS = "order_id, customer_id, cashier_id, order_status::text AS order_status, "
+            + "order_channel::text AS order_channel, created_at::text AS created_at, updated_at::text AS updated_at, "
             + "payment_method::text AS payment_method, order_total";
 
     private final DataSource pool;
@@ -25,12 +22,12 @@ public class OrderRepository {
         this.pool = pool;
     }
 
-    public Order placeOrder(PaymentType paymentType, List<OrderLine> lines) throws SQLException {
+    public Order placeOrder(PlaceOrderRequest request, OrderChannel channel, PaymentType paymentType) throws SQLException {
         try (Connection conn = pool.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                int orderId = insertOrderRow(conn, paymentType);
-                for (OrderLine line : lines) {
+                int orderId = insertOrderRow(conn, request.customerId(), request.cashierId(), channel, paymentType);
+                for (OrderLine line : request.lines()) {
                     insertLine(conn, orderId, line);
                 }
                 Order order = writeOrderTotal(conn, orderId);
@@ -98,7 +95,10 @@ public class OrderRepository {
         while (rs.next()) {
             orders.add(new Order(
                     rs.getInt("order_id"),
+                    rs.getObject("customer_id", Integer.class),
+                    rs.getObject("cashier_id", Integer.class),
                     rs.getString("order_status"),
+                    rs.getString("order_channel"),
                     rs.getString("created_at"),
                     rs.getString("updated_at"),
                     rs.getString("payment_method"),
@@ -110,13 +110,18 @@ public class OrderRepository {
 
 
     // Helper functions used internally
-    private int insertOrderRow(Connection conn, PaymentType paymentType) throws SQLException {
+    private int insertOrderRow(Connection conn, Integer customerId, Integer cashierId,
+                               OrderChannel channel, PaymentType paymentType) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO orders (payment_method) VALUES (?::payment_method) RETURNING order_id")) {
-                stmt.setString(1, paymentType.dbValue());
-                ResultSet rs = stmt.executeQuery();
-                rs.next();
-                return rs.getInt("order_id");
+                "INSERT INTO orders (customer_id, cashier_id, order_channel, payment_method) "
+                        + "VALUES (?, ?, ?::order_channel, ?::payment_method) RETURNING order_id")) {
+            stmt.setObject(1, customerId, Types.INTEGER);
+            stmt.setObject(2, cashierId, Types.INTEGER);
+            stmt.setString(3, channel.dbValue());
+            stmt.setString(4, paymentType.dbValue());
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt("order_id");
         }
     }
 
@@ -192,5 +197,15 @@ public class OrderRepository {
             }
         }
         return itemTypes;
+    }
+
+    public UserRole getActiveUserRole(int userId) throws SQLException {
+        try (Connection conn = pool.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                 "SELECT user_role::text AS user_role FROM users WHERE user_id = ? AND active = TRUE")) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? UserRole.fromDb(rs.getString("user_role")) : null;
+        }
     }
 }

@@ -21,6 +21,12 @@ public class OrderService {
         if (request.lines().isEmpty()) {
             throw new IllegalArgumentException("Order must have at least one line");
         }
+        OrderChannel channel = request.channel() == null
+                ? OrderChannel.IN_STORE : OrderChannel.fromDb(request.channel());
+        if (channel == null) {
+            throw new IllegalArgumentException("Invalid channel: " + request.channel());
+        }
+        validateParties(request, channel);
 
         Set<Integer> itemIds = new HashSet<>();
         for (OrderLine line : request.lines()) {
@@ -30,7 +36,7 @@ public class OrderService {
         for (OrderLine line : request.lines()) {
             validateLine(line, itemTypes);
         }
-        return orderRepository.placeOrder(paymentType, request.lines());
+        return orderRepository.placeOrder(request, channel, paymentType);
     }
 
     public Order getOrder(int id) throws SQLException {
@@ -82,6 +88,28 @@ public class OrderService {
             if (counts.getOrDefault(type, 0) != required) {
                 throw new IllegalArgumentException(
                         combo.displayName() + " requires " + required + " " + type.dbValue() + "(s)");
+            }
+        }
+    }
+
+    private void validateParties(PlaceOrderRequest request, OrderChannel channel) throws SQLException {
+        if (request.customerId() != null && orderRepository.getActiveUserRole(request.customerId()) == null) {
+            throw new IllegalArgumentException("Unknown or inactive customer: " + request.customerId());
+        }
+        if (channel == OrderChannel.IN_STORE) {
+            if (request.cashierId() == null) {
+                throw new IllegalArgumentException("In-store orders need a cashierId");
+            }
+            UserRole role = orderRepository.getActiveUserRole(request.cashierId());
+            if (role != UserRole.CASHIER && role != UserRole.MANAGER) {
+                throw new IllegalArgumentException("cashierId must be an active cashier or manager");
+            }
+        } else {
+            if (request.cashierId() != null) {
+                throw new IllegalArgumentException("Online orders cannot have a cashier");
+            }
+            if (request.customerId() == null) {
+                throw new IllegalArgumentException("Online orders need a customerId");
             }
         }
     }

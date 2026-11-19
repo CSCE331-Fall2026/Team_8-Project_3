@@ -12,4 +12,14 @@
 - **Prompt:** Add compile instructions and example Postman requests to the README, and record the assistant's output in `AI-USE.md`.
 - **Output:** Appended "Back-End: Compile and Run" and "Example Postman Requests" sections to `README.md`, and wrote this file.
 
+## Session log 11/12 – 11/19
 
+### 1. Order flow redesign
+- **Design:** Kept `Order` as the database row and response type. Added request types (`PlaceOrderRequest`, `OrderLine`) and the `PaymentType` and `OrderChannel` enums. Reduced `ComboType` to validation rules only.
+- **`placeOrder`:** One transaction that inserts the order, details, combo details, total and ingredient stock.
+- **Validation (service):** Payment method, non-empty lines, combo exists, item counts per combo, items active, a la carte rule, and customer, cashier and channel rules. Invalid input returns 400 through `IllegalArgumentException`.
+- **Customer, cashier and channel:** Added `customer_id`, `cashier_id` and `order_channel` to `orders`.
+
+### 2. Firebase authentication
+- **Implemented (as code the user added):** `FirebaseSetup` (emulator or real credentials), `FirebaseAuthHelper` (token verification), `AccessControl` (a `beforeMatched` handler: public, token-only, profile lookup, role check, deny by default), `Access` and `UserRole` as route roles, role lists on every route, ownership rules (user routes and order reads), and `placeOrder` deriving customer, cashier and channel from the signed-in user.
+- **Registration and sign-in flow:** The client signs up with Firebase, then `POST /users` creates the profile with `firebase_id` and `email` taken from the verified token. Sign-in is Firebase only, followed by `GET /users/me`.

@@ -5,13 +5,19 @@ import javax.sql.DataSource;
 import controllers.IngredientsController;
 import controllers.OrderController;
 import controllers.MenuController;
+import controllers.UsersController;
 import database.Database;
+import firebase.AccessControl;
+import firebase.FirebaseSetup;
 import repository.IngredientRepository;
 import repository.MenuRepository;
 import repository.OrderRepository;
+import repository.UsersRepository;
 import services.IngredientService;
 import services.MenuService;
 import services.OrderService;
+import services.UsersService;
+
 
 public class App {
     public static void main(String[] args) {
@@ -21,6 +27,14 @@ public class App {
             pool = Database.dataSource();
         } catch (ExceptionInInitializerError e) {
             System.err.println("Error connecting to database: " + e.getCause().getMessage());
+            System.exit(1);
+        }
+
+        try {
+            FirebaseSetup.init();
+        } catch (Exception e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            System.err.println("Error initializing FirebaseApp: " + cause.getMessage());
             System.exit(1);
         }
 
@@ -36,10 +50,16 @@ public class App {
         IngredientService ingredientService = new IngredientService(ingredientRepository);
         IngredientsController ingredientsController = new IngredientsController(ingredientService);
 
+        UsersRepository usersRepository = new UsersRepository(pool);
+        UsersService usersService = new UsersService(usersRepository);
+        UsersController usersController = new UsersController(usersService);
+
         Javalin app = Javalin.create(config -> {
+            AccessControl.register(config, usersService);
             orderController.registerRoutes(config);
             menuController.registerRoutes(config);
             ingredientsController.registerRoutes(config);
+            usersController.registerRoutes(config);
             config.bundledPlugins.enableCors(cors -> {
                 cors.addRule(rule -> rule.allowHost("http://localhost:5173", allowedOrigins()));
             });
