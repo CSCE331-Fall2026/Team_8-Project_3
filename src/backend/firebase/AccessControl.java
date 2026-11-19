@@ -17,8 +17,12 @@ public final class AccessControl {
     public static void register(JavalinConfig config, UsersService usersService) {
         config.routes.beforeMatched(ctx -> {
             Set<RouteRole> roles = ctx.routeRoles();
-            if (roles.isEmpty() || roles.contains(Access.PUBLIC)) {
+            if (roles.contains(Access.PUBLIC)) {
                 return;
+            }
+
+            if (roles.isEmpty()) {
+                throw new ForbiddenResponse("Route needs access rules configured");
             }
 
             FirebaseToken token = FirebaseAuthHelper.verifyToken(ctx);

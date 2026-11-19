@@ -7,6 +7,7 @@ import io.javalin.http.Context;
 import io.javalin.config.JavalinConfig;
 
 import models.Ingredient;
+import models.UserRole;
 import services.IngredientService;
 
 public class IngredientsController {
@@ -19,11 +20,13 @@ public class IngredientsController {
     }
 
     public void registerRoutes(JavalinConfig config) {
-        config.routes.post("/ingredients", this::createIngredient);
-        config.routes.get("/ingredients", this::getIngredients);
-        config.routes.get("/ingredients/{ingredientID}", this::getIngredientByID);
-        config.routes.put("/ingredients/{ingredientID}", this::updateIngredient);
-        config.routes.delete("/ingredients/{ingredientID}", this::deleteIngredient);
+        config.routes.post("/ingredients", this::createIngredient, UserRole.MANAGER);
+        config.routes.get("/ingredients", this::getIngredients,
+                UserRole.MANAGER, UserRole.CASHIER, UserRole.KITCHEN);
+        config.routes.get("/ingredients/{ingredientID}", this::getIngredientByID,
+                UserRole.MANAGER, UserRole.CASHIER, UserRole.KITCHEN);
+        config.routes.put("/ingredients/{ingredientID}", this::updateIngredient, UserRole.MANAGER);
+        config.routes.delete("/ingredients/{ingredientID}", this::deleteIngredient, UserRole.MANAGER);
     }
 
     // POST /ingredients

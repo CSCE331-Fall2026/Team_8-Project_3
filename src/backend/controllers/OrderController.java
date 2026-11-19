@@ -8,6 +8,8 @@ import io.javalin.config.JavalinConfig;
 
 import models.Order;
 import models.PlaceOrderRequest;
+import models.User;
+import models.UserRole;
 import services.OrderService;
 
 public class OrderController {
@@ -18,16 +20,28 @@ public class OrderController {
     }
 
     public void registerRoutes(JavalinConfig config) {
-        config.routes.post("/orders", this::placeOrder);
-        config.routes.get("/orders/{orderID}", this::getOrderByID);
-        config.routes.get("/orders", this::getOrders);
-        config.routes.put("/orders/{orderID}", this::updateOrder);
-        config.routes.delete("/orders/{orderID}", this::deleteOrder);
+        config.routes.post("/orders", this::placeOrder,
+                UserRole.MANAGER, UserRole.CUSTOMER, UserRole.CASHIER);
+        config.routes.get("/orders/{orderID}", this::getOrderByID, UserRole.values());
+        config.routes.get("/orders", this::getOrders,
+                UserRole.MANAGER, UserRole.KITCHEN, UserRole.CASHIER);
+        config.routes.put("/orders/{orderID}", this::updateOrder, UserRole.MANAGER);
+        config.routes.delete("/orders/{orderID}", this::deleteOrder, UserRole.MANAGER);
     }
 
     // POST /orders
     public void placeOrder(Context ctx) throws SQLException {
-        PlaceOrderRequest request = ctx.bodyAsClass(PlaceOrderRequest.class);
+        User caller = ctx.attribute("user");
+        PlaceOrderRequest body = ctx.bodyAsClass(PlaceOrderRequest.class);
+
+        PlaceOrderRequest request;
+        if (caller.userRole() == UserRole.CUSTOMER) {
+            request = new PlaceOrderRequest(
+                    caller.userId(), null, "online", body.paymentMethod(), body.lines());
+        } else {
+            request = new PlaceOrderRequest(
+                    body.customerId(), caller.userId(), "in_store", body.paymentMethod(), body.lines());
+        }
 
         try {
             Order createdOrder = orderService.placeOrder(request);
@@ -39,10 +53,12 @@ public class OrderController {
 
     // GET /orders/{orderID}
     public void getOrderByID(Context ctx) throws SQLException {
+        User caller = ctx.attribute("user");
         int orderID = ctx.pathParamAsClass("orderID", Integer.class).get();
 
         Order order = orderService.getOrder(orderID);
-        if (order == null) {
+        boolean isOwner = order != null && caller.userId().equals(order.customerId());
+        if (order == null || (caller.userRole() == UserRole.CUSTOMER && !isOwner)) {
             ctx.status(404).result("Order not found");
             return;
         }
@@ -85,5 +101,3 @@ public class OrderController {
     }
 }
 
-// TODO: Implement cashier functionality
-// Services knows about http and returns status codes and unpacks JSON from request body
