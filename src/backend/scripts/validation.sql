@@ -147,4 +147,26 @@ JOIN menu_item_details AS md ON m.menu_item_id = md.menu_item_id
 JOIN ingredients AS i ON i.ingredient_id = md.ingredient_id
 WHERE i.ingredient_name = 'Rice';
 
+\echo 'Q9 end'
+
+-----------------------------------------------
+
+-- Q10: Rewards prices match the 10% rule
+
+\echo '\nQ10: Checking rewards costs and points earned...'
+\echo '\nExpected: No rows. A row means a price is not 90 points per dollar, or earned points are not 10 per cash dollar'
+SELECT 'combo' AS kind, combo_id::text AS id, combo_name::text AS name
+FROM combos
+WHERE rewards_cost <> ROUND(combo_price * 90)::INT
+UNION ALL
+SELECT 'menu_item', menu_item_id::text, menu_item_name
+FROM menu_items
+WHERE rewards_cost <> ROUND(premium_charge * 90)::INT
+UNION ALL
+SELECT 'order', order_id::text, COALESCE(payment_method::text, '')
+FROM orders
+WHERE rewards_earned <> ROUND(order_total * 10)::INT;
+
+\echo 'Q10 end'
+
 -----------------------------------------------

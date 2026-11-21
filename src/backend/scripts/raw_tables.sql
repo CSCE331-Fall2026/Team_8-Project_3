@@ -1,27 +1,27 @@
-INSERT INTO menu_items (menu_item_id, menu_item_name, premium_charge, menu_price) VALUES
-(1, 'The Original Orange Chicken', 0.0, 7.45),
-(2, 'Honey Walnut Shrimp (Premium)', 2.5, 8.4),
-(3, 'Beijing Beef', 0.0, 8.5),
-(4, 'Broccoli Beef', 0.0, 7.95),
-(5, 'Grilled Teriyaki Chicken', 0.0, 7.3),
-(6, 'Kung Pao Chicken', 0.0, 7.15),
-(7, 'Honey Sesame Chicken Breast', 0.0, 7.75),
-(8, 'Black Pepper Chicken', 0.0, 7.15),
-(9, 'Mushroom Chicken', 0.0, 7.1),
-(10, 'String Bean Chicken Breast', 0.0, 7.65),
-(11, 'SweetFire Chicken Breast', 0.0, 7.6),
-(12, 'Black Pepper Sirloin Steak (Premium)', 2.5, 8.8),
-(13, 'Chow Mein', 0.0, 5.45),
-(14, 'Fried Rice', 0.0, 5.15),
-(15, 'Super Greens', 0.0, 5.15),
-(16, 'White Steamed Rice', 0.0, 3.95),
-(17, 'Brown Steamed Rice', 0.0, 3.95),
-(18, 'Chicken Egg Roll', 0.0, 1.95),
-(19, 'Veggie Spring Roll', 0.0, 1.75),
-(20, 'Cream Cheese Rangoon', 0.0, 2.35),
-(21, 'Chicken Potstickers', 0.0, 4.95),
-(22, 'Apple Pie Roll', 0.0, 2.25),
-(23, 'Soda', 0.0, 2.19);
+INSERT INTO menu_items (menu_item_id, menu_item_name, premium_charge, menu_item_type, rewards_cost) VALUES
+(1, 'The Original Orange Chicken', 0.0, 'entree', 0),
+(2, 'Honey Walnut Shrimp (Premium)', 2.5, 'entree', 225),
+(3, 'Beijing Beef', 0.0, 'entree', 0),
+(4, 'Broccoli Beef', 0.0, 'entree', 0),
+(5, 'Grilled Teriyaki Chicken', 0.0, 'entree', 0),
+(6, 'Kung Pao Chicken', 0.0, 'entree', 0),
+(7, 'Honey Sesame Chicken Breast', 0.0, 'entree', 0),
+(8, 'Black Pepper Chicken', 0.0, 'entree', 0),
+(9, 'Mushroom Chicken', 0.0, 'entree', 0),
+(10, 'String Bean Chicken Breast', 0.0, 'entree', 0),
+(11, 'SweetFire Chicken Breast', 0.0, 'entree', 0),
+(12, 'Black Pepper Sirloin Steak (Premium)', 2.5, 'entree', 225),
+(13, 'Chow Mein', 0.0, 'side', 0),
+(14, 'Fried Rice', 0.0, 'side', 0),
+(15, 'Super Greens', 0.0, 'side', 0),
+(16, 'White Steamed Rice', 0.0, 'side', 0),
+(17, 'Brown Steamed Rice', 0.0, 'side', 0),
+(18, 'Chicken Egg Roll', 0.0, 'appetizer', 0),
+(19, 'Veggie Spring Roll', 0.0, 'appetizer', 0),
+(20, 'Cream Cheese Rangoon', 0.0, 'appetizer', 0),
+(21, 'Chicken Potstickers', 0.0, 'appetizer', 0),
+(22, 'Apple Pie Roll', 0.0, 'appetizer', 0),
+(23, 'Soda', 0.0, 'drink', 0);
 
 INSERT INTO ingredients (ingredient_id, ingredient_name, quantity_in_stock, storage_type, ingredient_cost, expiry_date, min_qty_on_hand, measurement_units) VALUES
 (1, 'Rice', 187.53, 'pantry', 0.41, '2025-08-02 14:55:05', 40.0, 'lb'),
@@ -154,14 +154,14 @@ INSERT INTO menu_item_details (menu_item_detail_id, menu_item_id, ingredient_id,
 (89, 23, 34, 1),
 (90, 23, 35, 1);
 
-INSERT INTO combos (combo_id, combo_name, combo_price) VALUES
-(1, 'Bowl', 8.99),
-(2, 'Plate', 10.99),
-(3, 'Big Plate', 12.99),
-(4, 'A la carte', 0.0),
-(5, 'Drink', 2.50),
-(6, 'Bowl Combo', 11.99),
-(7, 'Plate Combo', 13.99),
-(8, 'Bigger Plate Combo', 14.99);
+INSERT INTO combos (combo_id, combo_name, combo_price, rewards_cost) VALUES
+(1, 'Bowl', 8.99, 809),
+(2, 'Plate', 10.99, 989),
+(3, 'Bigger Plate', 12.99, 1169),
+(4, 'A la carte', 0.0, 0),
+(5, 'Drink', 2.50, 225),
+(6, 'Bowl Combo', 11.99, 1079),
+(7, 'Plate Combo', 13.99, 1259),
+(8, 'Bigger Plate Combo', 14.99, 1349);
 
 

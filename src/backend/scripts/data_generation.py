@@ -1,5 +1,6 @@
 import random
 from datetime import datetime, timedelta
+from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 
 random.seed(42)
@@ -133,6 +134,16 @@ COMBO_ELIGIBLE = {
 }
 
 
+def points_for_price(price) -> int:
+    """90 points per dollar, so $10 of food costs the points earned on $90 of cash."""
+    return int((Decimal(str(price)) * 90).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+
+def points_earned(cash_total) -> int:
+    """10 points per dollar paid in cash."""
+    return int((Decimal(str(cash_total)) * 10).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+
 def iso_timestamp(value: datetime) -> str:
     return value.isoformat(timespec="seconds")
 
@@ -176,6 +187,7 @@ def generate_menu_items():
             "menu_item_name": name,
             "premium_charge": premium_charge,
             "menu_item_type": menu_item_type,
+            "rewards_cost": points_for_price(premium_charge),
         }
         for item_id, name, premium_charge, menu_item_type in MENU_ITEMS
     ]
@@ -253,7 +265,12 @@ def generate_menu_item_details_rows(menu_items):
 
 def generate_combos():
     return [
-        {"combo_id": combo_id, "combo_name": name, "combo_price": round(price, 2)}
+        {
+            "combo_id": combo_id,
+            "combo_name": name,
+            "combo_price": round(price, 2),
+            "rewards_cost": points_for_price(price),
+        }
         for combo_id, name, price in COMBOS
     ]
 
@@ -303,6 +320,8 @@ def generate_orders(order_count=10):
                 "updated_at": updated_at,
                 "payment_method": payment_method,
                 "order_total": 0.0,
+                "rewards_earned": 0,
+                "rewards_spent": 0,
             }
         )
 
@@ -321,21 +340,29 @@ def generate_order_details(orders, combos):
     for order in orders:
         selected_combos = random.sample(combos, k=random.randint(1, min(3, len(combos))))
         order_total = 0.0
+        rewards_spent = 0
 
         for combo in selected_combos:
             qty = random.randint(1, 3)
-            order_total = round(order_total + combo["combo_price"] * qty, 2)
+            paid_with_rewards = random.random() < 0.1
+            if paid_with_rewards:
+                rewards_spent += combo["rewards_cost"] * qty
+            else:
+                order_total = round(order_total + combo["combo_price"] * qty, 2)
             rows.append(
                 {
                     "order_detail_id": order_detail_id,
                     "combo_id": combo["combo_id"],
                     "order_id": order["order_id"],
                     "order_qty": qty,
+                    "paid_with_rewards": paid_with_rewards,
                 }
             )
             order_detail_id += 1
 
         order["order_total"] = order_total
+        order["rewards_spent"] = rewards_spent
+        order["rewards_earned"] = points_earned(order_total)
 
     return rows
 
@@ -349,9 +376,15 @@ def build_sql_script(mode="static", order_count=10):
 
         sql_script += build_insert_sql(
             "menu_items",
-            ["menu_item_id", "menu_item_name", "premium_charge", "menu_item_type"],
+            ["menu_item_id", "menu_item_name", "premium_charge", "menu_item_type", "rewards_cost"],
             [
-                (row["menu_item_id"], row["menu_item_name"], row["premium_charge"], row["menu_item_type"])
+                (
+                    row["menu_item_id"],
+                    row["menu_item_name"],
+                    row["premium_charge"],
+                    row["menu_item_type"],
+                    row["rewards_cost"],
+                )
                 for row in static_rows["menu_items"]
             ],
         )
@@ -389,9 +422,9 @@ def build_sql_script(mode="static", order_count=10):
         )
         sql_script += build_insert_sql(
             "combos",
-            ["combo_id", "combo_name", "combo_price"],
+            ["combo_id", "combo_name", "combo_price", "rewards_cost"],
             [
-                (row["combo_id"], row["combo_name"], row["combo_price"])
+                (row["combo_id"], row["combo_name"], row["combo_price"], row["rewards_cost"])
                 for row in static_rows["combos"]
             ],
         )
@@ -408,7 +441,7 @@ def build_sql_script(mode="static", order_count=10):
 
         sql_script += build_insert_sql(
             "orders",
-            ["order_id", "order_status", "created_at", "updated_at", "payment_method", "order_total"],
+            ["order_id", "order_status", "created_at", "updated_at", "payment_method", "order_total", "rewards_earned", "rewards_spent"],
             [
                 (
                     row["order_id"],
@@ -417,15 +450,23 @@ def build_sql_script(mode="static", order_count=10):
                     row["updated_at"],
                     row["payment_method"],
                     row["order_total"],
+                    row["rewards_earned"],
+                    row["rewards_spent"],
                 )
                 for row in dynamic_rows["orders"]
             ],
         )
         sql_script += build_insert_sql(
             "order_details",
-            ["order_detail_id", "combo_id", "order_id", "order_qty"],
+            ["order_detail_id", "combo_id", "order_id", "order_qty", "paid_with_rewards"],
             [
-                (row["order_detail_id"], row["combo_id"], row["order_id"], row["order_qty"])
+                (
+                    row["order_detail_id"],
+                    row["combo_id"],
+                    row["order_id"],
+                    row["order_qty"],
+                    row["paid_with_rewards"],
+                )
                 for row in dynamic_rows["order_detail_rows"]
             ],
         )
