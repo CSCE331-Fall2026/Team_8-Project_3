@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 public class OrderRepository {
     private static final String COLUMNS = "order_id, customer_id, cashier_id, order_status::text AS order_status, "
             + "order_channel::text AS order_channel, created_at::text AS created_at, updated_at::text AS updated_at, "
-            + "payment_method::text AS payment_method, order_total";
+            + "payment_method::text AS payment_method, order_total, rewards_earned, rewards_spent";
 
     private final DataSource pool;
 
@@ -31,6 +31,12 @@ public class OrderRepository {
                     insertLine(conn, orderId, line);
                 }
                 Order order = writeOrderTotal(conn, orderId);
+                if (order.rewardsSpent() > 0 && order.customerId() == null) {
+                    throw new IllegalArgumentException("Rewards payment requires a customer");
+                }
+                if (order.customerId() != null) {
+                    applyRewards(conn, order);
+                }
                 updateIngredientStock(conn, orderId);
                 conn.commit();
                 return order;
@@ -102,7 +108,9 @@ public class OrderRepository {
                     rs.getString("created_at"),
                     rs.getString("updated_at"),
                     rs.getString("payment_method"),
-                    rs.getDouble("order_total")));
+                    rs.getDouble("order_total"),
+                    rs.getInt("rewards_earned"),
+                    rs.getInt("rewards_spent")));
         }
         stmt.close();
         return orders;
@@ -128,11 +136,12 @@ public class OrderRepository {
     private void insertLine(Connection conn, int orderId, OrderLine line) throws SQLException {
         int orderDetailId;
         try (PreparedStatement stmt = conn.prepareStatement(
-                "INSERT INTO order_details (order_id, combo_id, order_qty) VALUES (?, ?, ?) "
-                        + "RETURNING order_detail_id")) {
+                "INSERT INTO order_details (order_id, combo_id, order_qty, paid_with_rewards) "
+                        + "VALUES (?, ?, ?, ?) RETURNING order_detail_id")) {
             stmt.setInt(1, orderId);
             stmt.setInt(2, line.comboId());
             stmt.setInt(3, line.quantity());
+            stmt.setBoolean(4, line.paidWithRewards());
             ResultSet rs = stmt.executeQuery();
             rs.next();
             orderDetailId = rs.getInt("order_detail_id");
@@ -151,18 +160,45 @@ public class OrderRepository {
 
     private Order writeOrderTotal(Connection conn, int orderId) throws SQLException {
         PreparedStatement stmt = conn.prepareStatement(
-                "UPDATE orders SET order_total = "
-                        + "COALESCE((SELECT SUM(c.combo_price * od.order_qty) FROM order_details AS od "
-                        + "JOIN combos AS c ON c.combo_id = od.combo_id WHERE od.order_id = ?), 0) "
-                        + "+ COALESCE((SELECT SUM(mi.premium_charge * od.order_qty) FROM order_details AS od "
-                        + "JOIN combo_details AS cd ON cd.order_detail_id = od.order_detail_id "
-                        + "JOIN menu_items AS mi ON mi.menu_item_id = cd.menu_item_id "
-                        + "WHERE od.order_id = ?), 0) "
-                        + "WHERE order_id = ? RETURNING " + COLUMNS);
-        stmt.setInt(1, orderId);
-        stmt.setInt(2, orderId);
-        stmt.setInt(3, orderId);
+                "WITH totals AS (SELECT "
+                        + "COALESCE((SELECT SUM(c.combo_price * od.order_qty) FROM order_details od "
+                        + "JOIN combos c ON c.combo_id = od.combo_id "
+                        + "WHERE od.order_id = ? AND NOT od.paid_with_rewards), 0) "
+                        + "+ COALESCE((SELECT SUM(mi.premium_charge * od.order_qty) FROM order_details od "
+                        + "JOIN combo_details cd ON cd.order_detail_id = od.order_detail_id "
+                        + "JOIN menu_items mi ON mi.menu_item_id = cd.menu_item_id "
+                        + "WHERE od.order_id = ? AND NOT od.paid_with_rewards), 0) AS cash_total, "
+                        + "COALESCE((SELECT SUM(c.rewards_cost * od.order_qty) FROM order_details od "
+                        + "JOIN combos c ON c.combo_id = od.combo_id "
+                        + "WHERE od.order_id = ? AND od.paid_with_rewards), 0) "
+                        + "+ COALESCE((SELECT SUM(mi.premium_reward_cost * od.order_qty) FROM order_details od "
+                        + "JOIN combo_details cd ON cd.order_detail_id = od.order_detail_id "
+                        + "JOIN menu_items mi ON mi.menu_item_id = cd.menu_item_id "
+                        + "WHERE od.order_id = ? AND od.paid_with_rewards), 0) AS points_spent) "
+                        + "UPDATE orders SET order_total = totals.cash_total, "
+                        + "rewards_spent = totals.points_spent::int, "
+                        + "rewards_earned = CASE WHEN customer_id IS NULL THEN 0 "
+                        + "ELSE ROUND((totals.cash_total * 10)::numeric)::int END "
+                        + "FROM totals WHERE order_id = ? RETURNING " + COLUMNS);
+        for (int i = 1; i <= 5; i++) {
+            stmt.setInt(i, orderId);
+        }
         return query(stmt).get(0);
+    }
+
+    private void applyRewards(Connection conn, Order order) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "UPDATE users SET rewards_points = COALESCE(rewards_points, 0) + ? - ? "
+                        + "WHERE user_id = ? AND COALESCE(rewards_points, 0) + ? >= ?")) {
+            stmt.setInt(1, order.rewardsEarned());
+            stmt.setInt(2, order.rewardsSpent());
+            stmt.setInt(3, order.customerId());
+            stmt.setInt(4, order.rewardsEarned());
+            stmt.setInt(5, order.rewardsSpent());
+            if (stmt.executeUpdate() == 0) {
+                throw new IllegalArgumentException("Not enough rewards points");
+            }
+        }
     }
 
     private void updateIngredientStock(Connection conn, int orderId) throws SQLException {

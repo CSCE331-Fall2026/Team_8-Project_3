@@ -1,5 +1,6 @@
 package repository;
 
+import models.Combo;
 import models.MenuItem;
 import models.MenuItemType;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class MenuRepository {
     private static final String COLUMNS = "menu_item_id, menu_item_name::text AS menu_item_name, "
-            + "premium_charge, active, menu_item_type::text AS menu_item_type";
+            + "premium_charge, active, menu_item_type::text AS menu_item_type, premium_reward_cost";
 
     private final DataSource pool;
 
@@ -21,14 +22,15 @@ public class MenuRepository {
     public MenuItem insertMenuItem(MenuItem menuItem) throws SQLException {
         try (Connection conn = pool.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO menu_items (menu_item_name, premium_charge, active, menu_item_type) "
-                            + "VALUES (?, COALESCE(?, 0), COALESCE(?, TRUE), ?::menu_item_type) "
+                    "INSERT INTO menu_items (menu_item_name, premium_charge, active, menu_item_type, premium_reward_cost) "
+                            + "VALUES (?, COALESCE(?, 0), COALESCE(?, TRUE), ?::menu_item_type, COALESCE(?, 0)) "
                             + "RETURNING " + COLUMNS);
             stmt.setString(1, menuItem.menuItemName());
             stmt.setObject(2, menuItem.premiumCharge(), Types.DOUBLE);
             stmt.setObject(3, menuItem.isActive(), Types.BOOLEAN);
             MenuItemType type = menuItem.menuItemType();
             stmt.setString(4, type == null ? null : type.dbValue());
+            stmt.setObject(5, menuItem.premiumRewardCost(), Types.INTEGER);
             return query(stmt).get(0);
         }
     }
@@ -57,16 +59,36 @@ public class MenuRepository {
                     "UPDATE menu_items SET menu_item_name = COALESCE(?, menu_item_name), "
                             + "premium_charge = COALESCE(?, premium_charge), "
                             + "active = COALESCE(?, active), "
-                            + "menu_item_type = COALESCE(?::menu_item_type, menu_item_type) "
+                            + "menu_item_type = COALESCE(?::menu_item_type, menu_item_type), "
+                            + "premium_reward_cost = COALESCE(?, premium_reward_cost) "
                             + "WHERE menu_item_id = ?");
             stmt.setString(1, menuItem.menuItemName());
             stmt.setObject(2, menuItem.premiumCharge(), Types.DOUBLE);
             stmt.setObject(3, menuItem.isActive(), Types.BOOLEAN);
             MenuItemType type = menuItem.menuItemType();
             stmt.setString(4, type == null ? null : type.dbValue());
-            stmt.setInt(5, id);
+            stmt.setObject(5, menuItem.premiumRewardCost(), Types.INTEGER);
+            stmt.setInt(6, id);
             return stmt.executeUpdate() > 0;
         }
+    }
+
+    public List<Combo> getCombos() throws SQLException {
+        List<Combo> combos = new ArrayList<>();
+        try (Connection conn = pool.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT combo_id, combo_name::text, combo_price, rewards_cost "
+                             + "FROM combos ORDER BY combo_id")) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                combos.add(new Combo(
+                        rs.getInt("combo_id"),
+                        rs.getString("combo_name"),
+                        rs.getDouble("combo_price"),
+                        rs.getInt("rewards_cost")));
+            }
+        }
+        return combos;
     }
 
     public boolean deleteMenuItem(int id) throws SQLException {
@@ -87,7 +109,8 @@ public class MenuRepository {
                     rs.getString("menu_item_name"),
                     rs.getDouble("premium_charge"),
                     rs.getBoolean("active"),
-                    MenuItemType.fromDb(rs.getString("menu_item_type"))));
+                    MenuItemType.fromDb(rs.getString("menu_item_type")),
+                    rs.getInt("premium_reward_cost")));
         }
         stmt.close();
         return menuItems;

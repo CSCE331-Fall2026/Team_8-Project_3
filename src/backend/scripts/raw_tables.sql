@@ -1,4 +1,4 @@
-INSERT INTO menu_items (menu_item_id, menu_item_name, premium_charge, menu_item_type, rewards_cost) VALUES
+INSERT INTO menu_items (menu_item_id, menu_item_name, premium_charge, menu_item_type, premium_reward_cost) VALUES
 (1, 'The Original Orange Chicken', 0.0, 'entree', 0),
 (2, 'Honey Walnut Shrimp (Premium)', 2.5, 'entree', 225),
 (3, 'Beijing Beef', 0.0, 'entree', 0),

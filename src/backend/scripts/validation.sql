@@ -161,7 +161,7 @@ WHERE rewards_cost <> ROUND(combo_price * 90)::INT
 UNION ALL
 SELECT 'menu_item', menu_item_id::text, menu_item_name
 FROM menu_items
-WHERE rewards_cost <> ROUND(premium_charge * 90)::INT
+WHERE premium_reward_cost <> ROUND(premium_charge * 90)::INT
 UNION ALL
 SELECT 'order', order_id::text, COALESCE(payment_method::text, '')
 FROM orders

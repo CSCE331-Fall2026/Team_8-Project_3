@@ -9,5 +9,7 @@ public record Order(
         String createdAt,
         String updatedAt,
         String paymentMethod,
-        Double orderTotal) {
+        Double orderTotal,
+        Integer rewardsEarned,
+        Integer rewardsSpent) {
 }

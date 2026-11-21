@@ -5,4 +5,5 @@ public record MenuItem(
     String menuItemName,
     Double premiumCharge,
     Boolean isActive,
-    MenuItemType menuItemType) {}
+    MenuItemType menuItemType,
+    Integer premiumRewardCost) {}

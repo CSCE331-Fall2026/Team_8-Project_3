@@ -3,6 +3,7 @@ package controllers;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import models.Access;
+import models.Combo;
 import models.MenuItem;
 import models.MenuItemType;
 import models.UserRole;
@@ -22,6 +23,7 @@ public class MenuController {
         config.routes.post("/menu", this::createMenuItem, UserRole.MANAGER);
         config.routes.get("/menu/{menuItemID}", this::getMenuItemByID, Access.PUBLIC);
         config.routes.get("/menu", this::getMenuItems, Access.PUBLIC);
+        config.routes.get("/combos", this::getCombos, Access.PUBLIC);
         config.routes.put("/menu/{menuItemID}", this::updateMenuItem, UserRole.MANAGER);
         config.routes.delete("/menu/{menuItemID}", this::deleteMenuItem, UserRole.MANAGER);
     }
@@ -50,6 +52,12 @@ public class MenuController {
     public void getMenuItems(Context ctx) throws SQLException {
         List<MenuItem> menuItems = menuService.getMenuItems();
         ctx.json(menuItems);
+    }
+
+    // GET /combos
+    public void getCombos(Context ctx) throws SQLException {
+        List<Combo> combos = menuService.getCombos();
+        ctx.json(combos);
     }
 
     // PUT /menu/{menuItemID}

@@ -64,7 +64,7 @@ CREATE TABLE menu_items (
     premium_charge FLOAT DEFAULT 0.0,
     active BOOLEAN DEFAULT TRUE,
     menu_item_type menu_item_type,
-    rewards_cost INT NOT NULL DEFAULT 0
+    premium_reward_cost INT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE ingredients (

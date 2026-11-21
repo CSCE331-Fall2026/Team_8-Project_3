@@ -187,7 +187,7 @@ def generate_menu_items():
             "menu_item_name": name,
             "premium_charge": premium_charge,
             "menu_item_type": menu_item_type,
-            "rewards_cost": points_for_price(premium_charge),
+            "premium_reward_cost": points_for_price(premium_charge),
         }
         for item_id, name, premium_charge, menu_item_type in MENU_ITEMS
     ]
@@ -376,14 +376,14 @@ def build_sql_script(mode="static", order_count=10):
 
         sql_script += build_insert_sql(
             "menu_items",
-            ["menu_item_id", "menu_item_name", "premium_charge", "menu_item_type", "rewards_cost"],
+            ["menu_item_id", "menu_item_name", "premium_charge", "menu_item_type", "premium_reward_cost"],
             [
                 (
                     row["menu_item_id"],
                     row["menu_item_name"],
                     row["premium_charge"],
                     row["menu_item_type"],
-                    row["rewards_cost"],
+                    row["premium_reward_cost"],
                 )
                 for row in static_rows["menu_items"]
             ],

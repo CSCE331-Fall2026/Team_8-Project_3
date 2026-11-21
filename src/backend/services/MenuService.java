@@ -1,5 +1,6 @@
 package services;
 
+import models.Combo;
 import models.MenuItem;
 import repository.MenuRepository;
 
@@ -23,6 +24,10 @@ public class MenuService {
 
     public List<MenuItem> getMenuItems() throws SQLException {
         return menuRepository.getMenuItems();
+    }
+
+    public List<Combo> getCombos() throws SQLException {
+        return menuRepository.getCombos();
     }
 
     public boolean updateMenuItem(int id, MenuItem menuItem) throws SQLException {
