@@ -156,7 +156,7 @@ function OrderScreen({ role }: { role: DevRole }) {
     const handleCheckout = async () => {
         if (cart.length === 0) return;
         try {
-            const token = await getToken();
+            //const token = await getToken();
             const res = await apiFetch(
                 "/orders",
                 {
