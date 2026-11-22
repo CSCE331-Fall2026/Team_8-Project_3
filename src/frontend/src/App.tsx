@@ -7,7 +7,7 @@ import Manager from "./pages/Manager";
 export default function App() {
   return (
     <>
-      <Routes>
+    <Routes>
         <Route path="/cashier" element={<Cashier />} />
         <Route path="/customer" element={<Customer />} />
         <Route path="/staff" element={<Kitchen />} />
