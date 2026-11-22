@@ -3,7 +3,6 @@ import { Button } from "../components/ui/button";
 import { Checkbox } from "../components/ui/checkbox";
 import { apiFetch } from "../lib/api";
 import type { DevRole } from "../lib/firebase";
-import { getToken } from "@/lib/firebase";
 import {
     Card,
     CardContent,
