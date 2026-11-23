@@ -14,3 +14,17 @@
 
 ### Deployment
 - Set up Render to host website
+
+
+
+## Sprint 2
+
+### Back-end
+- Implemented authentication with Firebase
+- Added rewards systems
+- Resolved issues regarding Render and deployment
+
+### Front-end
+- Created GUI views for all views
+- Implemented functionality for all views
+- Connected front-end views to database
