@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { API_URL } from "../lib/api";
+import { apiFetch } from "../lib/api";
 
 interface Ingredient {
   ingredientId: number;
@@ -26,7 +26,7 @@ function Kitchen() {
     setError(null);
 
     try {
-      const res = await fetch(`${API_URL}/ingredients`);
+      const res = await apiFetch("/ingredients", {}, { role: "kitchen" });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const data = await res.json();
       setIngredients(data);

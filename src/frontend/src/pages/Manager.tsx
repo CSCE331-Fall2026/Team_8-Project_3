@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { API_URL } from "../lib/api";
+import { apiFetch } from "../lib/api";
 
 interface Ingredient {
   ingredientId: number;
@@ -41,7 +41,7 @@ function Manager() {
 
   const fetchIngredients = async () => {
     try {
-      const res = await fetch(`${API_URL}/ingredients`);
+      const res = await apiFetch("/ingredients", {}, { role: "manager" });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const data: Ingredient[] = await res.json();
       setIngredients(data);
@@ -58,7 +58,7 @@ function Manager() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`${API_URL}/orders?n=${orderCount}`);
+      const res = await apiFetch(`/orders?n=${orderCount}`, {}, { role: "manager" });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const data = await res.json();
       setOrders(data);
@@ -84,7 +84,28 @@ function Manager() {
     setPrices((prev) => ({ ...prev, [ingredientId]: value }));
   };
 
-  const handleSavePrice = (_ingredient: Ingredient) => {};
+  const handleSavePrice = async (ingredient: Ingredient) => {
+    const newCost = Number(prices[ingredient.ingredientId]);
+    if (Number.isNaN(newCost)) {
+      setError("Invalid price");
+      return;
+    }
+    try {
+      const res = await apiFetch(
+        `/ingredients/${ingredient.ingredientId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ ingredientCost: newCost }),
+        },
+        { role: "manager" },
+      );
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      await fetchIngredients();
+    } catch (e) {
+      console.error("Request failed:", e);
+      setError("Failed to update price");
+    }
+  };
 
   const totalSales = orders.reduce((total, order) => total + order.orderTotal, 0);
 

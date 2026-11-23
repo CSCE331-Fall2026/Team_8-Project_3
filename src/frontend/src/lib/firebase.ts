@@ -7,7 +7,7 @@ import {
     signOut,
 } from "firebase/auth";
 
-export type DevRole = "cashier" | "customer";
+export type DevRole = "cashier" | "customer" | "manager" | "kitchen";
 
 const USE_EMULATOR = import.meta.env.VITE_USE_AUTH_EMULATOR === "true";
 const API_URL: string = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
@@ -29,6 +29,8 @@ if (USE_EMULATOR) {
 const DEV_EMAILS: Record<DevRole, string | undefined> = {
     cashier: import.meta.env.VITE_DEV_CASHIER_EMAIL,
     customer: import.meta.env.VITE_DEV_CUSTOMER_EMAIL,
+    manager: import.meta.env.VITE_DEV_MANAGER_EMAIL,
+    kitchen: import.meta.env.VITE_DEV_KITCHEN_EMAIL,
 };
 
 const inflight: Partial<Record<DevRole, Promise<void>>> = {};
@@ -57,7 +59,7 @@ function devSignIn(role: DevRole): Promise<void> {
             },
             body: JSON.stringify({
                 firstName: "Dev",
-                lastName: role === "cashier" ? "Cashier" : "Customer",
+                lastName: role.charAt(0).toUpperCase() + role.slice(1),
                 phoneNumber: "9795551234",
                 userRole: role,
             }),
