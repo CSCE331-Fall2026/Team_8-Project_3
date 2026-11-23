@@ -45,6 +45,24 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 
 ``npm install``
 
+Create `src/frontend/.env.local` with the Firebase web app configuration. The first three Firebase values are required by the frontend; the remaining values are only needed when developing with the local Auth emulator.
+
+```dotenv
+VITE_API_URL=http://localhost:8080
+VITE_FIREBASE_API_KEY=<firebase-web-api-key>
+VITE_FIREBASE_AUTH_DOMAIN=<firebase-project-id>.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=<firebase-project-id>
+
+VITE_USE_AUTH_EMULATOR=true
+VITE_DEV_PASSWORD=password123
+VITE_DEV_CUSTOMER_EMAIL=customer@example.com
+VITE_DEV_CASHIER_EMAIL=cashier@example.com
+VITE_DEV_MANAGER_EMAIL=manager@example.com
+VITE_DEV_KITCHEN_EMAIL=kitchen@example.com
+```
+
+For a deployed build, set `VITE_FIREBASE_*` and the deployed backend URL in the frontend hosting environment. Set `VITE_USE_AUTH_EMULATOR` to `false` (or omit it) and do not set the `VITE_DEV_*` variables in production.
+
 ``npm run dev``
 
 The frontend calls the backend at `http://localhost:8080` unless `VITE_API_URL` is set when building.
@@ -81,7 +99,7 @@ mvn exec:java "-Dexec.mainClass=App"
 ```
 Install Maven with:
 - **macOS:** `brew install maven`
-- **Windows:** `winget install Apache.Maven` (or `choco install maven` / `scoop install maven`), then open a new terminal so `mvn` is on your `PATH`
+- **Windows:** `choco install maven` or `scoop install maven`. Apache Maven is not currently available through `winget`. Open a new terminal after installation so `mvn` is on your `PATH`.
 - **Any OS:** download from https://maven.apache.org/download.cgi and add its `bin` folder to `PATH`
 
 On Windows, check your setup with `java -version` and `mvn -version`. If `mvn` is not recognized, `JAVA_HOME` must point to the JDK 25 folder and Maven's `bin` folder must be on `PATH`.

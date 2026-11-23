@@ -76,3 +76,4 @@ dist-ssr
 # Python
 __pycache__/
 *.py[cod]
+src/frontend/node_modules/.vite/deps/_metadata.json
