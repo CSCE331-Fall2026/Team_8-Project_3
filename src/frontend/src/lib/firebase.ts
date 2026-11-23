@@ -4,7 +4,6 @@ import {
     connectAuthEmulator,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
-    signOut,
 } from "firebase/auth";
 
 export type DevRole = "cashier" | "customer" | "manager" | "kitchen";
@@ -78,10 +77,7 @@ export async function getToken(role: DevRole = "cashier"): Promise<string> {
     await auth.authStateReady();
 
     if (USE_EMULATOR) {
-        if (auth.currentUser?.email !== DEV_EMAILS[role]) {
-            if (auth.currentUser) await signOut(auth);
-            await devSignIn(role);
-        }
+        if (!auth.currentUser) await devSignIn(role);
     } else if (!auth.currentUser) {
         throw new Error("Not signed in");
     }

@@ -187,7 +187,7 @@ function OrderScreen({ role }: { role: DevRole }) {
     };
 
     return (
-        <div className="flex h-screen w-full flex-row gap-4 p-4">
+        <div className="flex h-full w-full flex-row gap-4 p-4">
             {/* Column 1: cart */}
             <div className="flex min-h-0 flex-1 flex-col gap-3">
                 <h2 className="text-xl font-semibold">Cart</h2>
