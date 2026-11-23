@@ -28,6 +28,32 @@ Team 8's website project for Panda Express targeted towards the public. Using ou
 - **Hosting service:** Render (backend Web Service + frontend Static Site)
 - **Authentication:** Firebase
 
+## Style Guide
+
+### Python
+
+- Snake case and capitalized global variables
+- Key value pairs on separate lines when block defined
+- Two lines between every function, one between variables
+- Global variables all stay at the top
+- Four spaces of indent to divide groups (i.e. if statements, while statements, functions)
+
+### Java
+
+- Two space indent when using a new group (i.e. if statements, while statements, functions)
+- One line between every function
+- Comments in important spots or inline comments only.
+
+### SQL
+
+- All lower case and snake case for fields and entity names
+- Line break, indentation, and trailing comma for select statements with > 2 values
+
+### fxml
+
+- Two space indent before in every group (i.e. <menus>, <items>)
+- No lines of space between lines of code.
+- One line of space between imports, as well as another line for fxml version
 
 # User Guide
 
