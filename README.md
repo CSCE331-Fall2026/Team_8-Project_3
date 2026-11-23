@@ -69,7 +69,7 @@ This also causes it to desync from the database. Use the school database instead
 Requires JDK 25 and Maven. Then from `src/backend`:
 ```bash
 mvn compile
-mvn exec:java -Dexec.mainClass=App
+mvn exec:java "-Dexec.mainClass=App"
 ```
 Install Maven with:
 - **macOS:** `brew install maven`
