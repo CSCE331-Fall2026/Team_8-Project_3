@@ -23,3 +23,23 @@
 ### 2. Firebase authentication
 - **Implemented (as code the user added):** `FirebaseSetup` (emulator or real credentials), `FirebaseAuthHelper` (token verification), `AccessControl` (a `beforeMatched` handler: public, token-only, profile lookup, role check, deny by default), `Access` and `UserRole` as route roles, role lists on every route, ownership rules (user routes and order reads), and `placeOrder` deriving customer, cashier and channel from the signed-in user.
 - **Registration and sign-in flow:** The client signs up with Firebase, then `POST /users` creates the profile with `firebase_id` and `email` taken from the verified token. Sign-in is Firebase only, followed by `GET /users/me`.
+
+
+## Session log 11/23
+
+### 1. Frontend login and navigation
+- **Prompts:**
+    - Generate a login page to use as the homescreen for the frontend
+    - Add an "I am a:" role dropdown on account creation
+    - Add a top bar on every page showing the user's name with a sign-out that returns to the login page
+- **Output:**
+    - A login page at `/` handling sign in, register, and "finish your profile". It checks `GET /users/me`, sends each role to its screen, and shows the profile form on a 404.
+    - A role dropdown whose value is sent as `userRole` in `POST /users`.
+    - A shared layout (`UserLayout`) with the user's name and a sign-out button, wrapping the four role pages as one layout route, with height fixes so the bar does not cause scrolling.
+
+### 2. Debugging a 403 on checkout
+- **Prompt:** Checking out from /customer returns "403 Must be logged in" even though the profile exists
+- **Output:**
+    - The assistant traced the message to `AccessControl.java:39`, where `getUserByFirebaseId` finds no active row, and suggested comparing the uid and the `active` flag. It also confirmed which database the backend was connected to.
+    - Decoding the token showed the real cause, which the user found: the dev shortcut in `getToken` signs out any account whose email differs from `VITE_DEV_CUSTOMER_EMAIL` and signs in as the dev account.
+    - The fix was to sign in as a dev account only when nobody is signed in.
